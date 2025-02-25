@@ -45,6 +45,7 @@ Install the following VSCode extensions:
 - Tailwind CSS Intellisense
 - Prettier
 - ESLint
+- Prisma
 
 Restart VSCode to ensure extensions run.
 
@@ -58,7 +59,7 @@ Run `npm install` in project directory command to install Node dependencies.
 
 External dependencies such as PostgreSQL and pgAdmin will be ran in Docker containers to create a standard environment and remove the need for manual installation.
 
-These containers will automatically download and run when the dev server is ran (see next section) but can be manually started by running `docker compose up -d` (-d will _detach_ the container and run it in the background).
+These containers can be started by executing `docker compose up -d` in the project directory and will continue running in the background.
 
 > **Note:** If Docker throws an error, ensure you restarted your computer and started Docker Desktop (should open automatically) after installation.
 
@@ -69,7 +70,25 @@ To stop running services, run `docker-compose down` in project directory.
 To start the SvelteKit dev server and run dependencies, enter the following command in the project directory.
 
 ```bash
-npm run dev -- --open   # (open page in browser)
+# Only needs ran if containers aren't already running
+docker compose up -d
+
+# Run dev server and open page in browser
+npm run dev -- --open
 ```
 
 The dev server will automatically rebuild the project and reload the page when a change is saved.
+
+# Database
+
+Prisma is an object relational mapper, meaning it was let us interact with the database using TypeScript objects rather than writing queries. This ensures type-safety and will avoid many errors and vulnerabilities with unsafe queries.
+
+Prisma Schemas, similar to SQL Schemas, will generate both the database tables as well as the type-safe client object we will use in our program. They can be found in the `prisma` folder.
+
+After updating/creating schemas first `migrate` to create the tables in the database, then `generate` to create the client:
+
+```bash
+# the name can be anything identifiable, similar to a Git commit message
+npx prisma migrate dev --name name
+npx prisma generate
+```
