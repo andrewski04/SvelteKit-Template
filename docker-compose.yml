@@ -1,5 +1,4 @@
 services:
-  # PostgreSQL Database
   postgres:
     image: postgres:15
     container_name: postgres
@@ -13,18 +12,21 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # pgAdmin (Web UI for PostgreSQL)
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
     restart: 'no'
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: adminpassword
+      PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - '5050:80'
     depends_on:
       - postgres
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./docker/pgadmin-servers.json:/pgadmin4/servers.json
 
 volumes:
   postgres_data:
+  pgadmin_data:

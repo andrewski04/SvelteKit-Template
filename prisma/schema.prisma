@@ -10,10 +10,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Example User schema
 model User {
-  id    Int    @id @default(autoincrement())
-  name  String
-  createdAt DateTime @default(now())
+  id       String   @id @default(uuid())
+  email    String   @unique
+  name     String
+  password String 
+  sessions Session[]
+}
+
+model Session {
+  id      String   @id @default(uuid())
+  userId  String
+  user    User     @relation(fields: [userId], references: [id])
+  expires DateTime
 }
 

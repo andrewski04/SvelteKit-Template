@@ -92,3 +92,8 @@ After updating/creating schemas first `migrate` to create the tables in the data
 npx prisma migrate dev --name name
 npx prisma generate
 ```
+
+pgAdmin, which runs alongside PostgreSQL in a Docker container, provides useful tools to manage the database.
+It can be accessed in a browser at http://localhost:5050 using the email "admin@example.com" and password "admin".
+
+Once signed in, under "Servers" select PostgreSQL and enter password "devpassword". You can now manually edit the database.
