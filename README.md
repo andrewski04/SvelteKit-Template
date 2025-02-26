@@ -49,23 +49,25 @@ Install the following VSCode extensions:
 
 Restart VSCode to ensure extensions run.
 
-## Installing Node Dependencies
-
-Run `npm install` in project directory command to install Node dependencies.
-
-> **Hint:** Open integrated VSCode terminal using ctrl + `
-
 ## Running External Dependencies
 
 External dependencies such as PostgreSQL and pgAdmin will be ran in Docker containers to create a standard environment and remove the need for manual installation.
 
-These containers can be started by executing `docker compose up -d` in the project directory and will continue running in the background.
+These containers can be started by executing `docker compose up -d` in the project directory and will continue running in the background. You can open the VSCode.
+
+> **Hint:** Open integrated VSCode terminal using ctrl + `
 
 > **Note:** If Docker throws an error, ensure you restarted your computer and started Docker Desktop (should open automatically) after installation.
 
 To stop running services, run `docker-compose down` in project directory.
 
-## Start Dev Server:
+## Prepare Environment
+
+Run `npm install` in project directory command to install Node dependencies.
+
+Copy `.env.example` and rename copy to `.env`. Change environmental variables as needed.
+
+## Start Dev Server
 
 To start the SvelteKit dev server and run dependencies, enter the following command in the project directory.
 
