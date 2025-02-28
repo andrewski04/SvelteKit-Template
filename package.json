@@ -25,6 +25,7 @@
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^2.46.1",
 		"globals": "^15.14.0",
+		"lucia": "^3.2.2",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.11",
@@ -38,7 +39,6 @@
 	},
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.7.4",
-		"@auth/sveltekit": "^1.7.4",
 		"@prisma/client": "^6.4.1",
 		"bcryptjs": "^3.0.2"
 	}

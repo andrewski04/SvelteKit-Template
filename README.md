@@ -10,10 +10,10 @@ This project also contains pre-configured VSCode workspace settings and recommen
 - NodeJS
 - Tailwind CSS
 - PostgreSQL/pgAdmin (Docker)
+- Prisma
 
 ## Missing
 
-- Prisma
 - Testing
 - Authentication
 
@@ -89,6 +89,8 @@ Prisma Schemas, similar to SQL Schemas, will generate both the database tables a
 
 After updating/creating schemas first `migrate` to create the tables in the database, then `generate` to create the client:
 
+> **NOTE:** Run these after any schema changes are made.
+
 ```bash
 # the name can be anything identifiable, similar to a Git commit message
 npx prisma migrate dev --name name
@@ -99,3 +101,7 @@ pgAdmin, which runs alongside PostgreSQL in a Docker container, provides useful 
 It can be accessed in a browser at http://localhost:5050 using the email "admin@example.com" and password "admin".
 
 Once signed in, under "Servers" select PostgreSQL and enter password "devpassword". You can now manually edit the database.
+
+## Other Notes
+
+- If you are getting odd linting errors (such as `./$types` not found) run command `npm run check`
