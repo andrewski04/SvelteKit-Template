@@ -1,40 +1,38 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
-import Credentials from '@auth/sveltekit/providers/credentials';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import prisma from '$lib/server/prisma';
-import bcrypt from 'bcryptjs';
+import { prisma } from './prisma';
+import Nodemailer from '@auth/sveltekit/providers/nodemailer';
+import { env } from '$env/dynamic/private';
+import type { Provider } from '@auth/sveltekit/providers';
+
+const providers: Provider[] = [
+	Nodemailer({
+		server: {
+			host: env.EMAIL_SERVER_HOST,
+			port: Number(process.env.EMAIL_SERVER_PORT),
+			auth: {
+				user: env.EMAIL_SERVER_USER,
+				pass: env.EMAIL_SERVER_PASSWORD
+			}
+		},
+		from: env.EMAIL_FROM
+	})
+];
+
+export const authProviderMap = providers.map((provider) => {
+	if (typeof provider === 'function') {
+		const providerData = provider();
+		return { id: providerData.id, name: providerData.name };
+	} else {
+		return { id: provider.id, name: provider.name };
+	}
+});
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	adapter: PrismaAdapter(prisma),
-	providers: [
-		Credentials({
-			name: 'Email & Password',
-			credentials: {
-				email: { label: 'Email', type: 'email', placeholder: 'you@example.com' },
-				password: { label: 'Password', type: 'password' }
-			},
-			async authorize(credentials) {
-				if (!credentials?.email || !credentials?.password) return null;
-
-				// Find user in database
-				const user = await prisma.user.findUnique({
-					where: { email: credentials.email }
-				});
-
-				if (!user || !user.password) return null; // User doesn't exist or missing password
-
-				// Check password validity
-				const isValid = await bcrypt.compare(credentials.password, user.password);
-				if (!isValid) return null; // Wrong password
-
-				return { id: user.id, name: user.name, email: user.email };
-			}
-		})
-	],
-	callbacks: {
-		async session({ session, user }) {
-			session.user.id = user.id;
-			return session;
-		}
+	providers,
+	pages: {
+		signIn: '/auth/login',
+		signOut: '/auth/logout'
 	}
 });
