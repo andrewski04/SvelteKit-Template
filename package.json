@@ -20,12 +20,17 @@
 		"@sveltejs/kit": "^2.16.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/vite": "^4.0.0",
+<<<<<<< HEAD
 		"@types/node": "^22.13.9",
 		"@types/nodemailer": "^6.4.17",
+=======
+		"@types/node": "^22.13.5",
+>>>>>>> 1cfff795e2271a08d7a3295d56d2c0bbd83f5b20
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^2.46.1",
 		"globals": "^15.14.0",
+		"lucia": "^3.2.2",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.11",
@@ -38,8 +43,12 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
+<<<<<<< HEAD
 		"@auth/prisma-adapter": "^2.8.0",
 		"@auth/sveltekit": "^1.8.0",
+=======
+		"@auth/prisma-adapter": "^2.7.4",
+>>>>>>> 1cfff795e2271a08d7a3295d56d2c0bbd83f5b20
 		"@prisma/client": "^6.4.1",
 		"nodemailer": "^6.10.0"
 	}

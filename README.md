@@ -10,12 +10,21 @@ This project also contains pre-configured VSCode workspace settings and recommen
 - NodeJS
 - Tailwind CSS
 - PostgreSQL/pgAdmin (Docker)
+<<<<<<< HEAD
 - Prisma ORM
 - Auth.js
 
 ## Missing
 
 - Testing Library
+=======
+- Prisma
+
+## Missing
+
+- Testing
+- Authentication
+>>>>>>> 1cfff795e2271a08d7a3295d56d2c0bbd83f5b20
 
 # Setup Environment
 
@@ -49,27 +58,33 @@ Install the following VSCode extensions:
 
 Restart VSCode to ensure extensions run.
 
-## Installing Node Dependencies
-
-Run `npm install` in project directory command to install Node dependencies.
-
-> **Hint:** Open integrated VSCode terminal using ctrl + `
-
 ## Running External Dependencies
 
 External dependencies such as PostgreSQL and pgAdmin will be ran in Docker containers to create a standard environment and remove the need for manual installation.
 
-These containers can be started by executing `docker compose up -d` in the project directory and will continue running in the background.
+These containers can be started by executing `docker compose up -d` in the project directory and will continue running in the background. You can open the VSCode.
+
+> **Hint:** Open integrated VSCode terminal using ctrl + `
 
 > **Note:** If Docker throws an error, ensure you restarted your computer after installation and start Docker Desktop to run the Docker Engine.
 
 To stop running services, run `docker-compose down` in project directory.
 
+<<<<<<< HEAD
 ## Setting Environmental Variables
 
 Copy `.env.example` as `.env` (Be sure not to delete the original example). The `.env` stores variables that will be used throughout the app, such as the database URL and SMTP server. The current defaults should work for the dev environment, but change these in production!
 
 ## Start Dev Server:
+=======
+## Prepare Environment
+
+Run `npm install` in project directory command to install Node dependencies.
+
+Copy `.env.example` and rename copy to `.env`. Change environmental variables as needed.
+
+## Start Dev Server
+>>>>>>> 1cfff795e2271a08d7a3295d56d2c0bbd83f5b20
 
 To start the SvelteKit dev server and run dependencies, enter the following command in the project directory.
 
@@ -91,6 +106,8 @@ Prisma Schemas, similar to SQL Schemas, will generate both the database tables a
 
 After updating/creating schemas first `migrate` to create the tables in the database and to create the client:
 
+> **NOTE:** Run these after any schema changes are made.
+
 ```bash
 # the name can be anything identifiable, similar to a Git commit message
 npx prisma migrate dev --name name
@@ -103,8 +120,14 @@ It can be accessed in a browser at http://localhost:5050 using the email "admin@
 
 Once signed in, under "Servers" select PostgreSQL and enter password "devpassword". You can now manually edit the database.
 
+<<<<<<< HEAD
 # Email
 
 By default, Auth.js will use email to send a "magic link" to sign in, rather than password authentication (this is considered more secure, it doesn't support regular password auth by default).
 
 In development, you can view any sent emails from MailDev by navigating to http://localhost:8080. Ensure that external dependencies (Docker containers) are running.
+=======
+## Other Notes
+
+- If you are getting odd linting errors (such as `./$types` not found) run command `npm run check`
+>>>>>>> 1cfff795e2271a08d7a3295d56d2c0bbd83f5b20
