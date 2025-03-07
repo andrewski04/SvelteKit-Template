@@ -33,6 +33,7 @@ services:
   maildev:
     image: maildev/maildev
     restart: always
+    container_name: maildev
     environment:
       - TZ=Asia/Shanghai
       - MAILDEV_WEB_PORT=1080

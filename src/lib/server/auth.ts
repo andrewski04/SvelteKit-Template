@@ -19,6 +19,8 @@ const providers: Provider[] = [
 	})
 ];
 
+// Map of OAuth providers (google, github, etc.) for pages to dynamically display
+// Since only email is used, it is just hard-coded on the current login page
 export const authProviderMap = providers.map((provider) => {
 	if (typeof provider === 'function') {
 		const providerData = provider();
@@ -30,9 +32,12 @@ export const authProviderMap = providers.map((provider) => {
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	adapter: PrismaAdapter(prisma),
-	providers
-	//pages: {
-	//	signIn: '/auth/login',
-	//	signOut: '/auth/logout'
-	//}
+	providers,
+	pages: {
+		signIn: '/auth/login',
+		signOut: '/auth/logout',
+		verifyRequest: '/auth/verify',
+		newUser: '/auth/new-user',
+		error: '/auth/error'
+	}
 });

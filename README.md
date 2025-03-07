@@ -95,16 +95,16 @@ Prisma is an object relational mapper, meaning it was let us interact with the d
 
 Prisma Schemas, similar to SQL Schemas, will generate both the database tables as well as the type-safe client object we will use in our program. They can be found in the `prisma` folder.
 
-After updating/creating schemas first `migrate` to create the tables in the database and to create the client:
+After making/pulling schema changes, `migrate` to update:
 
-> **NOTE:** Run these after any schema changes are made.
+> **NOTE:** Run these after any schema changes are made or pulled from Git.
 
 ```bash
-# the name can be anything identifiable, similar to a Git commit message
-npx prisma migrate dev --name name
+# If asked for a name, name it something identifiable, similar to a Git commit message.
+npx prisma migrate dev
 ```
 
-If the Prisma client isn't working (missing attributes, etc.), use `npx prisma generate` to manually generate the client, though this should run automatically with the above `migrate` command.
+If the Prisma client isn't working (missing object attributes, etc.), use `npx prisma generate` to manually generate the client, though this should run automatically with the above `migrate` command.
 
 pgAdmin, which runs alongside PostgreSQL in a Docker container, provides useful tools to manage the database.
 It can be accessed in a browser at http://localhost:5050 using the email "admin@example.com" and password "admin".
@@ -117,6 +117,8 @@ By default, Auth.js will use email to send a "magic link" to sign in, rather tha
 
 In development, you can view any sent emails from MailDev by navigating to http://localhost:8080. Ensure that external dependencies (Docker containers) are running.
 
-## Other Notes
+## Debugging & Errors
 
 - If you are getting odd linting errors (such as `./$types` not found) run command `npm run check` or run the dev server.
+
+- For **[auth] TypeError: Cannot read properties of undefined (reading 'create')** or other database errors, run `npx prisma migrate dev` to synchronize the client and DB.
