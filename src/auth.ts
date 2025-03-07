@@ -1,6 +1,6 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import { prisma } from './prisma';
+import { prisma } from './lib/server/prisma';
 import Nodemailer from '@auth/sveltekit/providers/nodemailer';
 import { env } from '$env/dynamic/private';
 import type { Provider } from '@auth/sveltekit/providers';
@@ -36,8 +36,6 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 	pages: {
 		signIn: '/auth/login',
 		signOut: '/auth/logout',
-		verifyRequest: '/auth/verify',
-		newUser: '/auth/new-user',
-		error: '/auth/error'
+		verifyRequest: '/auth/verify'
 	}
 });
