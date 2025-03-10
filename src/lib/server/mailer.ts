@@ -17,23 +17,14 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendMagicLink(email: string, token: string): Promise<void> {
-	const magicLink = `${process.env.DOMAIN}auth/magic?token=${token}`;
+	const magicLink = `${process.env.DOMAIN}api/auth/magic?token=${token}`;
 
 	await transporter.sendMail({
 		from: process.env.EMAIL_USER,
 		to: email,
 		subject: 'Your Login Link',
-		html: `<p>Click the link below to log in:</p>
+		html: `<p>Click the link below to log in, this will expire in 10 minutes:</p>
 		       <a href="${magicLink}">Login</a>`
-	});
-}
-
-export async function sendMagicCode(email: string, code: string): Promise<void> {
-	await transporter.sendMail({
-		from: process.env.EMAIL_USER,
-		to: email,
-		subject: 'Your Magic Login Code',
-		html: `<p>Your login code is: <strong>${code}</strong></p>`
 	});
 }
 

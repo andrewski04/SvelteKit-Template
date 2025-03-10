@@ -2,14 +2,18 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
- 
+
 generator client {
   provider = "prisma-client-js"
 }
- 
+
 model User {
-  id      String       @id @default(cuid())
-  sessions Session[]
+  id         String       @id @default(cuid())
+  email      String       @unique
+  firstName  String?
+  lastName   String?
+  sessions   Session[]
+  MagicToken MagicToken[]
 }
 
 model Session {
@@ -17,12 +21,14 @@ model Session {
   userId    String
   expiresAt DateTime
 
-  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model MagicToken {
-	id        String   @id @default(uuid())
-	email     String
-	token     String   @unique
-	expiresAt DateTime
+  id        String   @id @default(uuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+
+  user User? @relation(fields: [email], references: [email], onDelete: Cascade)
 }

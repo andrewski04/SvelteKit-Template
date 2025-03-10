@@ -5,9 +5,11 @@ import type { RequestEvent } from '@sveltejs/kit';
 import type { User, Session } from '@prisma/client';
 
 // API to manage user session tokens
+// Session tokens are stored in cookies to authenticate users,
+// not to be confused with magic tokens used for one time login
 
 export function generateSessionToken(): string {
-	const bytes = new Uint8Array(20);
+	const bytes = new Uint8Array(32);
 	crypto.getRandomValues(bytes);
 	const token = encodeBase32LowerCaseNoPadding(bytes);
 	return token;
