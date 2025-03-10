@@ -16,39 +16,25 @@ const transporter = nodemailer.createTransport({
 	}
 });
 
-/**
- * Sends an email using the configured transporter.
- * @param to Recipient email address.
- * @param subject Email subject.
- * @param text Plain text content.
- * @param html HTML content (optional).
- */
-export async function sendEmail({
-	to,
-	subject,
-	text,
-	html
-}: {
-	to: string;
-	subject: string;
-	text: string;
-	html?: string;
-}) {
-	try {
-		const info = await transporter.sendMail({
-			from: process.env.EMAIL_FROM, // Default sender
-			to,
-			subject,
-			text,
-			html
-		});
+export async function sendMagicLink(email: string, token: string): Promise<void> {
+	const magicLink = `${process.env.DOMAIN}auth/magic?token=${token}`;
 
-		console.log(`Email sent to ${to}: ${info.messageId}`);
-		return info;
-	} catch (error) {
-		console.error('Error sending email:', error);
-		throw new Error('Email could not be sent');
-	}
+	await transporter.sendMail({
+		from: process.env.EMAIL_USER,
+		to: email,
+		subject: 'Your Login Link',
+		html: `<p>Click the link below to log in:</p>
+		       <a href="${magicLink}">Login</a>`
+	});
+}
+
+export async function sendMagicCode(email: string, code: string): Promise<void> {
+	await transporter.sendMail({
+		from: process.env.EMAIL_USER,
+		to: email,
+		subject: 'Your Magic Login Code',
+		html: `<p>Your login code is: <strong>${code}</strong></p>`
+	});
 }
 
 export default transporter;
