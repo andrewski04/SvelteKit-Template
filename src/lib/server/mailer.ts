@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendMagicLink(email: string, token: string): Promise<void> {
-	const magicLink = `${process.env.DOMAIN}api/auth/magic?token=${token}`;
+	const magicLink = `${process.env.DOMAIN}/auth/magic-link?token=${token}`;
 
 	await transporter.sendMail({
 		from: process.env.EMAIL_USER,

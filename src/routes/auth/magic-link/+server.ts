@@ -12,7 +12,7 @@ export async function GET(event) {
 
 	const user = await prisma.user.findUnique({ where: { email } });
 
-	if (!user || user.firstName || user.lastName) {
+	if (!user || user.firstName == null || user.lastName == null) {
 		// Redirect new users to a setup page to collect first and last name
 		event.cookies.set('pending_email', email, { httpOnly: true, path: '/' });
 		return redirect(302, '/auth/setup');
