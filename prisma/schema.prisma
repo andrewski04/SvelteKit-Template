@@ -13,7 +13,6 @@ model User {
   firstName  String?
   lastName   String?
   sessions   Session[]
-  MagicToken MagicToken[]
 }
 
 model Session {
@@ -25,10 +24,10 @@ model Session {
 }
 
 model MagicToken {
-  id        String   @id @default(uuid())
+  token     String   @id
   email     String
-  token     String   @unique
+  otp       String   // Store the OTP code
+  verified  Boolean  @default(false) // Track if magic link was opened
+  deviceId  String?  // Store the requesting device ID 
   expiresAt DateTime
-
-  user User? @relation(fields: [email], references: [email], onDelete: Cascade)
 }
