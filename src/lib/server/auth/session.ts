@@ -8,13 +8,27 @@ import type { RequestEvent } from '@sveltejs/kit';
 // Session tokens are stored in cookies to authenticate users,
 // not to be confused with magic tokens used for one time login
 
-export function generateSessionToken(): string {
+/**
+ * Generates a new session token.
+ *
+ * @returns - The generated session token.
+ */
+function generateSessionToken(): string {
 	const bytes = new Uint8Array(32);
 	crypto.getRandomValues(bytes);
 	return encodeBase32LowerCaseNoPadding(bytes);
 }
 
-export async function createSession(userId: string): Promise<Session> {
+/**
+ * Creates a new session for the user, returning the session object and the token.
+ *
+ * Note that session ID is the hashed token, the returned token
+ * should be used to set cookies as this will be forgotten by the server!
+ *
+ * @param userId - User ID to create session for.
+ * @returns - An object containing the session object and the token.
+ */
+export async function createSession(userId: string): Promise<{ session: Session; token: string }> {
 	const token = generateSessionToken();
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session: Session = {
@@ -25,9 +39,15 @@ export async function createSession(userId: string): Promise<Session> {
 	await prisma.session.create({
 		data: session
 	});
-	return session;
+	return { session, token };
 }
 
+/**
+ * Validates a session token, returning the session object and the user object.
+ *
+ * @param token - The session token to validate.
+ * @returns - An object containing the session object and the user object.
+ */
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const result = await prisma.session.findUnique({
@@ -60,10 +80,31 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	return { session, user };
 }
 
+/**
+ * Invalidates a session by its ID.
+ *
+ * @param sessionId - The ID of the session to invalidate.
+ */
 export async function invalidateSession(sessionId: string): Promise<void> {
 	await prisma.session.delete({ where: { id: sessionId } });
 }
 
+/**
+ * Invalidates all sessions for a user.
+ *
+ * @param userId - The ID of the user to invalidate sessions for.
+ */
+export async function invalidateUserSessions(userId: string): Promise<void> {
+	await prisma.session.deleteMany({ where: { userId } });
+}
+
+/**
+ * Sets the session token cookie.
+ *
+ * @param event - The request event.
+ * @param token - The session token.
+ * @param expiresAt - The expiration date of the session.
+ */
 export function setSessionTokenCookie(
 	event: { cookies: RequestEvent['cookies'] },
 	token: string,
@@ -78,6 +119,11 @@ export function setSessionTokenCookie(
 	});
 }
 
+/**
+ * Deletes the session token cookie.
+ *
+ * @param event - The request event.
+ */
 export function deleteSessionTokenCookie(event: { cookies: RequestEvent['cookies'] }): void {
 	event.cookies.delete('session', { path: '/' });
 }

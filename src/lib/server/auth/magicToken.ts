@@ -1,6 +1,13 @@
 import { prisma } from '$lib/server/prisma';
 import crypto from 'crypto';
 
+/**
+ * Creates a new magic token for the given email and device ID.
+ *
+ * @param email - The email associated with the token.
+ * @param deviceId - The ID of the device requesting the token.
+ * @returns - An object containing the token and OTP.
+ */
 export async function createMagicToken(
 	email: string,
 	deviceId: string
@@ -8,8 +15,8 @@ export async function createMagicToken(
 	// Generate a secure random token
 	const token = crypto.randomBytes(32).toString('hex');
 
-	// Generate a 6-digit OTP code
-	const otp = Math.floor(100000 + Math.random() * 900000).toString();
+	const otpValue = crypto.randomBytes(3).readUIntBE(0, 3) % 1000000;
+	const otp = otpValue.toString().padStart(6, '0');
 
 	// Set expiration time (10 minutes from now)
 	const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
@@ -29,6 +36,14 @@ export async function createMagicToken(
 	return { token, otp };
 }
 
+/**
+ * Validates a magic token.
+ *
+ * @param token - The magic token to validate.
+ * @param deviceId - The ID of the device requesting the token.
+ * @param otp - The OTP code associated with the token.
+ * @returns - An object indicating whether the token is valid and the associated email.
+ */
 export async function validateMagicToken(
 	token: string,
 	deviceId?: string,

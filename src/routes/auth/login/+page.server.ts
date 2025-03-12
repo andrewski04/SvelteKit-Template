@@ -5,7 +5,10 @@ import { sendMagicLink } from '$lib/server/mailer';
 import { nanoid } from 'nanoid';
 
 export const actions: Actions = {
-	default: async ({ request, cookies }) => {
+	// handles email input for passwordless login
+	// successful requests redirect to check-email page
+	// failed requests return error message
+	default: async ({ request, cookies, url }) => {
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
 
@@ -28,7 +31,8 @@ export const actions: Actions = {
 
 		const { token } = await createMagicToken(email, deviceId);
 
-		await sendMagicLink(email, token);
+		const baseUrl = `${url.protocol}//${url.host}`;
+		await sendMagicLink(email, token, baseUrl);
 
 		throw redirect(303, `/auth/check-email?email=${encodeURIComponent(email)}`);
 	}

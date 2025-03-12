@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { PageData } from './$types';
 
-	export let data: PageData;
-	export let form;
+	const { data, form } = $props();
 </script>
 
 <div class="mx-auto mt-10 max-w-md rounded-lg bg-white p-6 shadow-md">
 	<h1 class="mb-4 text-2xl font-bold text-gray-800">Check your email</h1>
 	<p class="mb-6 text-gray-600">
-		We've sent a login link to <strong class="font-medium">{data.email}</strong>
+		We've sent a login link to <strong>{data.email}</strong>
 	</p>
 
 	<div class="relative my-6">
@@ -32,17 +30,17 @@
 			<label for="otp" class="mb-1 block text-sm font-medium text-gray-700">Verification Code</label
 			>
 			<input
-				type="text"
 				id="otp"
 				name="otp"
 				placeholder="Enter 6-digit code"
+				type="text"
+				minlength="6"
 				maxlength="6"
-				pattern="[0-9]{6}"
 				required
+				autocomplete="off"
 				class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
 			/>
 		</div>
-
 		<div class="mb-4">
 			<label for="email" class="mb-1 block text-sm font-medium text-gray-700">Email</label>
 			<input

@@ -52,9 +52,9 @@ export const actions: Actions = {
 			});
 		}
 
-		const session = await createSession(user.id);
+		const { token, session } = await createSession(user.id);
 
-		setSessionTokenCookie({ cookies }, session.id, session.expiresAt);
+		setSessionTokenCookie({ cookies }, token, session.expiresAt);
 
 		throw redirect(303, '/dashboard');
 	}

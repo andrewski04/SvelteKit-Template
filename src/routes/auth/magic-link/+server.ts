@@ -4,9 +4,9 @@ import prisma from '$lib/server/prisma';
 import { createSession, setSessionTokenCookie } from '$lib/server/auth/session';
 
 export const GET: RequestHandler = async ({ url, cookies }) => {
-	const token = url.searchParams.get('token');
+	const magicTokenId = url.searchParams.get('token');
 
-	if (!token) {
+	if (!magicTokenId) {
 		throw redirect(303, '/auth/login');
 	}
 
@@ -15,7 +15,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 
 	// Find the magic token
 	const magicToken = await prisma.magicToken.findUnique({
-		where: { token }
+		where: { token: magicTokenId }
 	});
 
 	if (!magicToken || magicToken.used || new Date() > magicToken.expiresAt) {
@@ -26,7 +26,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	if (deviceId && deviceId === magicToken.deviceId) {
 		// Mark token as used
 		await prisma.magicToken.update({
-			where: { token },
+			where: { token: magicTokenId },
 			data: { used: true }
 		});
 
@@ -39,13 +39,13 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			});
 		}
 
-		const session = await createSession(user.id);
+		const { session, token } = await createSession(user.id);
 
-		setSessionTokenCookie({ cookies }, session.id, session.expiresAt);
+		setSessionTokenCookie({ cookies }, token, session.expiresAt);
 
 		throw redirect(303, '/dashboard');
 	}
 
 	// If different device, redirect to OTP display page
-	throw redirect(303, `/auth/otp?token=${token}`);
+	throw redirect(303, `/auth/otp?token=${magicTokenId}`);
 };
