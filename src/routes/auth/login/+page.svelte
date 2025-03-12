@@ -9,11 +9,6 @@
 	<button type="submit">Send Magic Link</button>
 </form>
 
-<!-- Display messages returned from the server - this should redirect to verify instead, if successful  -->
-{#if form?.success}
-	<p style="color: green;">{form.message}</p>
-{/if}
-
-{#if form?.success == false}
+{#if form?.error}
 	<p style="color: red;">{form.error}</p>
 {/if}

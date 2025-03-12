@@ -1,102 +1,73 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { ActionData, PageData } from './$types';
-
-	let error = $state('');
-	let loading = $state(false);
-	let formSubmitted = $state(false);
+	import type { PageData } from './$types';
 
 	export let data: PageData;
-	export let form: ActionData;
-
-	$effect(() => {
-		if (form?.error) {
-			error = form.error;
-		}
-	});
-
-	function handleSubmit() {
-		loading = true;
-		formSubmitted = true;
-		return async ({ update }: { update: () => Promise<void> }) => {
-			await update();
-			loading = false;
-		};
-	}
+	export let form;
 </script>
 
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-	<div class="sm:mx-auto sm:w-full sm:max-w-md">
-		<h2 class="mt-6 text-center text-2xl font-bold tracking-tight">Check your email</h2>
+<div class="mx-auto mt-10 max-w-md rounded-lg bg-white p-6 shadow-md">
+	<h1 class="mb-4 text-2xl font-bold text-gray-800">Check your email</h1>
+	<p class="mb-6 text-gray-600">
+		We've sent a login link to <strong class="font-medium">{data.email}</strong>
+	</p>
 
-		<div class="mt-4 text-center text-sm">
-			<p>We've sent a magic link to <span class="font-medium">{data.email}</span></p>
-			<p class="mt-2">Click the link in your email to sign in</p>
+	<div class="relative my-6">
+		<div class="absolute inset-0 flex items-center">
+			<div class="w-full border-t border-gray-300"></div>
 		</div>
-
-		<div class="mt-8 text-center">
-			<div class="relative">
-				<div class="absolute inset-0 flex items-center">
-					<div class="w-full border-t border-gray-300"></div>
-				</div>
-				<div class="relative flex justify-center text-sm">
-					<span class="bg-white px-2 text-gray-500">Or enter the verification code</span>
-				</div>
-			</div>
+		<div class="relative flex justify-center text-sm">
+			<span class="bg-white px-2 text-gray-500">OR</span>
 		</div>
 	</div>
 
-	<div class="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-		<form method="POST" use:enhance={handleSubmit} class="space-y-6">
-			<div>
-				<label for="otp" class="block text-sm font-medium"> Verification code </label>
-				<div class="mt-2">
-					<input
-						id="otp"
-						name="otp"
-						type="text"
-						inputmode="numeric"
-						pattern="[0-9]*"
-						autocomplete="one-time-code"
-						placeholder="Enter 6-digit code"
-						required
-						class="block w-full rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-gray-300 ring-inset focus:ring-2 focus:ring-indigo-600 focus:ring-inset sm:text-sm sm:leading-6"
-					/>
-				</div>
-			</div>
+	<h2 class="mb-3 text-xl font-semibold text-gray-800">Enter verification code</h2>
+	<p class="mb-4 text-gray-600">
+		If you're using a different device, open the link on that device to get a verification code,
+		then enter it below:
+	</p>
 
-			{#if error}
-				<div class="text-sm text-red-500" role="alert">{error}</div>
-			{/if}
+	<form method="POST" action="?/verifyOtp" use:enhance>
+		<div class="mb-4">
+			<label for="otp" class="mb-1 block text-sm font-medium text-gray-700">Verification Code</label
+			>
+			<input
+				type="text"
+				id="otp"
+				name="otp"
+				placeholder="Enter 6-digit code"
+				maxlength="6"
+				pattern="[0-9]{6}"
+				required
+				class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
+			/>
+		</div>
 
-			{#if form?.success}
-				<div class="text-sm text-green-500" role="alert">
-					Verification successful! Redirecting...
-				</div>
-			{/if}
+		<div class="mb-4">
+			<label for="email" class="mb-1 block text-sm font-medium text-gray-700">Email</label>
+			<input
+				type="email"
+				id="email"
+				name="email"
+				value={data.email}
+				readonly
+				class="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2"
+			/>
+		</div>
 
-			<div>
-				<button
-					type="submit"
-					disabled={loading}
-					class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70"
-				>
-					{#if loading}
-						Verifying...
-					{:else}
-						Verify Code
-					{/if}
-				</button>
-			</div>
+		{#if form?.error}
+			<div class="mb-4 text-sm text-red-500">{form.error}</div>
+		{/if}
 
-			<div class="text-center text-sm text-gray-500">
-				<p>
-					Didn't receive an email? <a
-						href="/auth/login"
-						class="font-medium text-indigo-600 hover:text-indigo-500">Try again</a
-					>
-				</p>
-			</div>
-		</form>
+		<button
+			type="submit"
+			class="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
+		>
+			Verify
+		</button>
+	</form>
+
+	<div class="mt-6 text-center">
+		<a href="/auth/login" class="text-sm text-indigo-600 hover:text-indigo-500">Back to login</a>
 	</div>
 </div>

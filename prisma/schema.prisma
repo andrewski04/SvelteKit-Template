@@ -24,10 +24,11 @@ model Session {
 }
 
 model MagicToken {
-  token     String   @id
+  token     String   @id 
+  otp       String
+  deviceId  String
   email     String
-  otp       String   // Store the OTP code
-  verified  Boolean  @default(false) // Track if magic link was opened
-  deviceId  String?  // Store the requesting device ID 
   expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

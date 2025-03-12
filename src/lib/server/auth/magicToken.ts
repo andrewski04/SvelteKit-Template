@@ -1,89 +1,66 @@
-import { prisma } from '../prisma.js';
-import { encodeBase32LowerCaseNoPadding } from '@oslojs/encoding';
-import { sha256 } from '@oslojs/crypto/sha2';
+import { prisma } from '$lib/server/prisma';
+import crypto from 'crypto';
 
-// generate a new OTP
-// called when a magic link is not opened from the requesting device
-function generateOTP(): string {
-	const bytes = new Uint8Array(4);
-	crypto.getRandomValues(bytes);
-	const num = new DataView(bytes.buffer).getUint32(0) % 100000000;
-	return num.toString().padStart(8, '0');
-}
-
-// generate the 32 bytes token used to identify a magic link
-function generateMagicToken(): string {
-	const bytes = new Uint8Array(32);
-	crypto.getRandomValues(bytes);
-	return encodeBase32LowerCaseNoPadding(bytes);
-}
-
-// create and store a magic token, used for one time login via link
 export async function createMagicToken(
 	email: string,
-	deviceId?: string
+	deviceId: string
 ): Promise<{ token: string; otp: string }> {
-	const token = generateMagicToken();
-	const hashedToken = encodeBase32LowerCaseNoPadding(sha256(new TextEncoder().encode(token)));
-	const otp = generateOTP();
+	// Generate a secure random token
+	const token = crypto.randomBytes(32).toString('hex');
 
+	// Generate a 6-digit OTP code
+	const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+	// Set expiration time (10 minutes from now)
+	const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+	// Store the token, OTP, and device ID in the database (using token as ID)
 	await prisma.magicToken.create({
 		data: {
-			email,
-			token: hashedToken,
+			token,
 			otp,
 			deviceId,
-			expiresAt: new Date(Date.now() + 1000 * 60 * 10) // Expires in 10 mins
+			email,
+			expiresAt,
+			used: false
 		}
 	});
 
 	return { token, otp };
 }
 
-// validates a magic token and returns the users email, or "null" if expired/non-existant
 export async function validateMagicToken(
 	token: string,
-	deviceId?: string
-): Promise<{
-	email: string | null;
-	requiresOTP: boolean;
-	hashedToken?: string;
-}> {
-	const hashedToken = encodeBase32LowerCaseNoPadding(sha256(new TextEncoder().encode(token)));
-
+	deviceId?: string,
+	otp?: string
+): Promise<{ isValid: boolean; email?: string }> {
 	const magicToken = await prisma.magicToken.findUnique({
-		where: { token: hashedToken }
+		where: { token }
 	});
 
-	if (!magicToken || magicToken.expiresAt < new Date()) {
-		return { email: null, requiresOTP: false };
+	if (!magicToken || magicToken.used || new Date() > magicToken.expiresAt) {
+		return { isValid: false };
 	}
 
-	// If device IDs match, allow direct login
+	// Check device ID first (same browser flow)
 	if (deviceId && magicToken.deviceId === deviceId) {
-		await prisma.magicToken.delete({ where: { token: hashedToken } });
-		return { email: magicToken.email, requiresOTP: false };
+		// Mark token as used
+		await prisma.magicToken.update({
+			where: { token },
+			data: { used: true }
+		});
+		return { isValid: true, email: magicToken.email };
 	}
 
-	// Otherwise mark as verified but require OTP
-	await prisma.magicToken.update({
-		where: { token: hashedToken },
-		data: { verified: true }
-	});
-
-	return { email: magicToken.email, requiresOTP: true, hashedToken };
-}
-
-// validate an OTP and return the users email, or "null" if expired/non-existant
-export async function validateOTP(hashedToken: string, otp: string): Promise<string | null> {
-	const magicToken = await prisma.magicToken.findUnique({
-		where: { token: hashedToken }
-	});
-
-	if (!magicToken || magicToken.expiresAt < new Date() || magicToken.otp !== otp) {
-		return null;
+	// If device ID doesn't match, check OTP (different browser flow)
+	if (otp && magicToken.otp === otp) {
+		// Mark token as used
+		await prisma.magicToken.update({
+			where: { token },
+			data: { used: true }
+		});
+		return { isValid: true, email: magicToken.email };
 	}
 
-	await prisma.magicToken.delete({ where: { token: hashedToken } });
-	return magicToken.email;
+	return { isValid: false };
 }

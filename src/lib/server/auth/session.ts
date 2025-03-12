@@ -1,8 +1,8 @@
-import { prisma } from './prisma.js';
+import { prisma } from '$lib/server/prisma';
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
 import { sha256 } from '@oslojs/crypto/sha2';
-import type { RequestEvent } from '@sveltejs/kit';
 import type { User, Session } from '@prisma/client';
+import type { RequestEvent } from '@sveltejs/kit';
 
 // API to manage user session tokens
 // Session tokens are stored in cookies to authenticate users,
@@ -11,11 +11,11 @@ import type { User, Session } from '@prisma/client';
 export function generateSessionToken(): string {
 	const bytes = new Uint8Array(32);
 	crypto.getRandomValues(bytes);
-	const token = encodeBase32LowerCaseNoPadding(bytes);
-	return token;
+	return encodeBase32LowerCaseNoPadding(bytes);
 }
 
-export async function createSession(token: string, userId: string): Promise<Session> {
+export async function createSession(userId: string): Promise<Session> {
+	const token = generateSessionToken();
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session: Session = {
 		id: sessionId,
@@ -64,34 +64,26 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 	await prisma.session.delete({ where: { id: sessionId } });
 }
 
-export async function invalidateAllSessions(userId: string): Promise<void> {
-	await prisma.session.deleteMany({
-		where: {
-			userId: userId
-		}
-	});
-}
-
-export type SessionValidationResult =
-	| { session: Session; user: User }
-	| { session: null; user: null };
-
-// create and delete session cookies stored on the client
-
-export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: Date): void {
+export function setSessionTokenCookie(
+	event: { cookies: RequestEvent['cookies'] },
+	token: string,
+	expiresAt: Date
+): void {
 	event.cookies.set('session', token, {
+		path: '/',
 		httpOnly: true,
 		sameSite: 'lax',
-		expires: expiresAt,
-		path: '/'
+		secure: process.env.NODE_ENV === 'production',
+		expires: expiresAt
 	});
 }
 
-export function deleteSessionTokenCookie(event: RequestEvent): void {
-	event.cookies.set('session', '', {
-		httpOnly: true,
-		sameSite: 'lax',
-		maxAge: 0,
-		path: '/'
-	});
+export function deleteSessionTokenCookie(event: { cookies: RequestEvent['cookies'] }): void {
+	event.cookies.delete('session', { path: '/' });
+}
+
+// properly type the return value of validateSessionToken
+export interface SessionValidationResult {
+	session: Session | null;
+	user: User | null;
 }

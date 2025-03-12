@@ -1,51 +1,51 @@
-import { json, redirect } from '@sveltejs/kit';
-import { validateMagicToken } from '$lib/server/auth/magicToken';
-import {
-	generateSessionToken,
-	createSession,
-	setSessionTokenCookie
-} from '$lib/server/auth/session';
-import { prisma } from '$lib/server/prisma';
+import { redirect } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+import prisma from '$lib/server/prisma';
+import { createSession, setSessionTokenCookie } from '$lib/server/auth/session';
 
-export async function GET(event) {
-	const token = event.url.searchParams.get('token');
-	if (!token) return json({ error: 'Invalid token' }, { status: 400 });
+export const GET: RequestHandler = async ({ url, cookies }) => {
+	const token = url.searchParams.get('token');
 
-	const deviceId = event.cookies.get('device_id');
-	const result = await validateMagicToken(token, deviceId);
-
-	if (!result.email) {
-		return json({ error: 'Token expired or invalid' }, { status: 400 });
+	if (!token) {
+		throw redirect(303, '/auth/login');
 	}
 
-	// If OTP is required, redirect to verification page
-	if (result.requiresOTP && result.hashedToken) {
-		event.cookies.set('pending_verification', result.hashedToken, {
-			path: '/',
-			httpOnly: true,
-			maxAge: 60 * 10 // 10 minutes
+	// Get device ID from cookies
+	const deviceId = cookies.get('device_id');
+
+	// Find the magic token
+	const magicToken = await prisma.magicToken.findUnique({
+		where: { token }
+	});
+
+	if (!magicToken || magicToken.used || new Date() > magicToken.expiresAt) {
+		throw redirect(303, '/auth/login?error=invalid_token');
+	}
+
+	// If same device ID, auto-authenticate
+	if (deviceId && deviceId === magicToken.deviceId) {
+		// Mark token as used
+		await prisma.magicToken.update({
+			where: { token },
+			data: { used: true }
 		});
-		event.cookies.set('pending_email', result.email, {
-			path: '/',
-			httpOnly: true,
-			maxAge: 60 * 10 // 10 minutes
-		});
-		return redirect(302, '/auth/verify');
+
+		// Find or create the user
+		let user = await prisma.user.findUnique({ where: { email: magicToken.email } });
+
+		if (!user) {
+			user = await prisma.user.create({
+				data: { email: magicToken.email }
+			});
+		}
+
+		const session = await createSession(user.id);
+
+		setSessionTokenCookie({ cookies }, session.id, session.expiresAt);
+
+		throw redirect(303, '/dashboard');
 	}
 
-	const user = await prisma.user.findUnique({ where: { email: result.email } });
-
-	if (!user || user.firstName == null || user.lastName == null) {
-		// Redirect new users to a setup page
-		event.cookies.set('pending_email', result.email, { httpOnly: true, path: '/' });
-		return redirect(302, '/auth/setup');
-	}
-
-	// Log in the user
-	const sessionToken = generateSessionToken();
-	const session = await createSession(sessionToken, user.id);
-
-	setSessionTokenCookie(event, sessionToken, session.expiresAt);
-
-	return redirect(302, '/dashboard');
-}
+	// If different device, redirect to OTP display page
+	throw redirect(303, `/auth/otp?token=${token}`);
+};

@@ -13,7 +13,8 @@ export const actions: Actions = {
 			return { success: false, error: 'Email is required' };
 		}
 
-		// Create or reuse a device identifier cookie
+		// Create or reuse a device identifier cookie,
+		// used to detect if magic link is opened on the same device
 		let deviceId = cookies.get('device_id');
 		if (!deviceId) {
 			deviceId = nanoid();
@@ -25,12 +26,10 @@ export const actions: Actions = {
 			});
 		}
 
-		const { token, otp } = await createMagicToken(email, deviceId);
+		const { token } = await createMagicToken(email, deviceId);
 
-		// Send magic link with OTP included
-		await sendMagicLink(email, token, otp);
+		await sendMagicLink(email, token);
 
-		// Redirect to check-email page
 		throw redirect(303, `/auth/check-email?email=${encodeURIComponent(email)}`);
 	}
 };
