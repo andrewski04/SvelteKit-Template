@@ -40,6 +40,15 @@ Install [Docker](https://docs.docker.com/desktop/setup/install/windows-install/)
 
 3. Change directory into repository (`cd project_name`) and run `code .` to open in VSCode
 
+## Setup Script
+
+The setup batch script will automatically handle the following steps, including installing dependencies, starting Docker containers, setting environment variables, and installing VSCode extensions.
+
+Simply run this after cloning the repository, then skip to the "Start Dev Server" step:
+`./setup.bat`
+
+If you have any issues with the setup script or want more details on the project, read the following steps.
+
 ## Install VSCode Extensions
 
 > **Hint**: You should be prompted to install these extensions when opening the workspace for the first time. Otherwise, navigate to extensions with the workpace open and search for `@recommended`.
@@ -104,6 +113,8 @@ After making/pulling schema changes, `migrate` to update:
 npx prisma migrate dev
 ```
 
+> **NOTE:** If migration fails, run `docker compose down -v` and restart the containers. **THIS WILL RESET ALL DATA IN THE DATABASE.**
+
 If the Prisma client isn't working (missing object attributes, etc.), use `npx prisma generate` to manually generate the client, though this should run automatically with the above `migrate` command.
 
 pgAdmin, which runs alongside PostgreSQL in a Docker container, provides useful tools to manage the database.
@@ -122,3 +133,5 @@ In development, you can view any sent emails from MailDev by navigating to http:
 - If you are getting odd linting errors (such as `./$types` not found) run command `npm run check` or run the dev server.
 
 - For **[auth] TypeError: Cannot read properties of undefined (reading 'create')** or other database errors, run `npx prisma migrate dev` to synchronize the client and DB.
+
+- If database migrations fail to apply (and the Docker containers are running), run `docker compose down -v` to completely clear the database. This will delete all data, since this is just for development.
