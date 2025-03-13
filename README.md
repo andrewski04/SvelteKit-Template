@@ -1,6 +1,6 @@
 # SvelteKit-Template
 
-This template aims to serve as a boilerplate project with both Node.js and external dependencies that is easy to setup. It contains pre-configured functionality for a PostgreSQL database, Prisma ORM, authentication, testing, and more.
+This template aims to serve as a boilerplate project, with both Node.js and external dependencies, that is easy to setup. It contains pre-configured functionality for a PostgreSQL database, Prisma ORM, authentication, testing, and more.
 
 This project also contains pre-configured VSCode workspace settings and recommended plugins, helping developers integrate SvelteKit easily into their environment.
 
@@ -9,21 +9,18 @@ This project also contains pre-configured VSCode workspace settings and recommen
 - SvelteKit
 - NodeJS
 - Tailwind CSS
-- PostgreSQL/pgAdmin (Docker)
-  <<<<<<< HEAD
 - Prisma ORM
-- Auth.js
+- Lucia authentication guide
 
-## Missing
+## External Dependencies (Docker)
 
-- # Testing Library
-- Prisma
+- PostgreSQL/pgAdmin Database
+- Maildev SMTP (for testing email sending)
 
-## Missing
+## To Be Implemented
 
 - Testing
-- Authentication
-  > > > > > > > 1cfff795e2271a08d7a3295d56d2c0bbd83f5b20
+- File storage
 
 # Setup Environment
 
@@ -116,7 +113,7 @@ Once signed in, under "Servers" select PostgreSQL and enter password "devpasswor
 
 # Email
 
-By default, Auth.js will use email to send a "magic link" to sign in, rather than password authentication (this is considered more secure, it doesn't support regular password auth by default).
+By default, authentication will use email to send a "magic link" to sign in, rather than password authentication (passwordless and oauth is now the recommended standard).
 
 In development, you can view any sent emails from MailDev by navigating to http://localhost:8080. Ensure that external dependencies (Docker containers) are running.
 
