@@ -1,21 +1,31 @@
 @echo off
 echo Checking prerequisites...
 
+
+
+REM Check if VS Code is installed
+call code --version >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Visual Studio Code is not installed or not in PATH.
+    exit /b 1
+)
+
 REM Check if Docker is running
-docker info >nul 2>&1
+call docker info >nul 2>&1
 if %errorlevel% neq 0 (
     echo Docker is not running. Please start Docker Desktop first.
     exit /b 1
 )
 
 REM Check if Node.js is installed
-node -v >nul 2>&1
+call node -v >nul 2>&1
 if %errorlevel% neq 0 (
     echo Node.js is not installed. Please install Node.js first.
     exit /b 1
 )
 
 REM Copy env file
+echo.
 echo Setting up environment...
 copy .env.example .env
 if %errorlevel% neq 0 (
@@ -24,6 +34,7 @@ if %errorlevel% neq 0 (
 )
 
 REM Install dependencies
+echo.
 echo Installing npm packages...
 call npm install
 if %errorlevel% neq 0 (
@@ -31,7 +42,13 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
+REM Remove docker volumes
+echo.
+echo Resetting Docker volumes...
+call docker-compose down -v
+
 REM Start Docker services
+echo.
 echo Starting Docker services...
 call docker-compose up -d
 if %errorlevel% neq 0 (
@@ -39,7 +56,21 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
+REM Wait for PostgreSQL to be ready
+echo.
+echo Waiting for PostgreSQL to start...
+:loop
+timeout /t 3 /nobreak > nul
+call docker exec -i postgres pg_isready -U postgres
+if %errorlevel% neq 0 (
+    goto loop
+)
+echo.
+echo PostgreSQL is ready!
+
+
 REM Run Prisma migrations
+echo.
 echo Setting up database...
 call npx prisma migrate dev
 if %errorlevel% neq 0 (
@@ -48,6 +79,7 @@ if %errorlevel% neq 0 (
 )
 
 REM Install recommended VSCode extensions
+echo.
 echo Installing VSCode extensions...
 call code --install-extension svelte.svelte-vscode
 call code --install-extension ardenivanov.svelte-intellisense
@@ -58,10 +90,19 @@ call code --install-extension dbaeumer.vscode-eslint
 call code --install-extension prisma.prisma
 call code --install-extension christian-kohler.npm-intellisense
 
+call code --install-extension vascosoares.roblox-epic-snippets
+
+call npm run check
+if %errorlevel% neq 0 (
+    echo npm check failed, try running the dev server (non-fatal issue)
+)
+
+echo.
+echo.
 echo Setup complete! 
 echo.
-echo Access points:
-echo - Development server: http://localhost:5173
+echo Domains:
+echo - Development server: http://localhost:5173 (start server first)
 echo - pgAdmin: http://localhost:5050 (email: admin@example.com, password: admin)
 echo - MailDev: http://localhost:8080
 echo.

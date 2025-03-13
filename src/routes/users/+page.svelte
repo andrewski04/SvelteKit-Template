@@ -22,7 +22,7 @@
 		<ul class="divide-y divide-gray-700">
 			{#each users as user}
 				<li class="p-3 transition hover:bg-gray-700">
-					<p class="text-lg font-medium">{user.name}</p>
+					<p class="text-lg font-medium">{user.firstName}</p>
 					<p class="text-lg font-medium">{user.email}</p>
 					<p class="text-sm text-gray-400">ID: {user.id}</p>
 				</li>

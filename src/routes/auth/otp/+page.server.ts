@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import prisma from '$lib/server/prisma';
+import { findMagicTokenByToken } from '$lib/server/auth/magicToken';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const token = url.searchParams.get('token');
@@ -10,11 +10,9 @@ export const load: PageServerLoad = async ({ url }) => {
 	}
 
 	// Find the magic token
-	const magicToken = await prisma.magicToken.findUnique({
-		where: { token }
-	});
+	const magicToken = await findMagicTokenByToken(token);
 
-	if (!magicToken || magicToken.used || new Date() > magicToken.expiresAt) {
+	if (!magicToken) {
 		return { otp: null };
 	}
 

@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import prisma from '$lib/server/prisma';
+import { findMagicTokenByToken, markTokenAsUsed } from '$lib/server/auth/magicToken';
+import { createUserIfNotExists } from '$lib/server/auth/user';
 import { createSession, setSessionTokenCookie } from '$lib/server/auth/session';
 
 export const GET: RequestHandler = async ({ url, cookies }) => {
@@ -14,30 +15,19 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	const deviceId = cookies.get('device_id');
 
 	// Find the magic token
-	const magicToken = await prisma.magicToken.findUnique({
-		where: { token: magicTokenId }
-	});
+	const magicToken = await findMagicTokenByToken(magicTokenId);
 
-	if (!magicToken || magicToken.used || new Date() > magicToken.expiresAt) {
+	if (!magicToken) {
 		throw redirect(303, '/auth/login?error=invalid_token');
 	}
 
 	// If same device ID, auto-authenticate
 	if (deviceId && deviceId === magicToken.deviceId) {
 		// Mark token as used
-		await prisma.magicToken.update({
-			where: { token: magicTokenId },
-			data: { used: true }
-		});
+		await markTokenAsUsed(magicTokenId);
 
 		// Find or create the user
-		let user = await prisma.user.findUnique({ where: { email: magicToken.email } });
-
-		if (!user) {
-			user = await prisma.user.create({
-				data: { email: magicToken.email }
-			});
-		}
+		const user = await createUserIfNotExists(magicToken.email);
 
 		const { session, token } = await createSession(user.id);
 

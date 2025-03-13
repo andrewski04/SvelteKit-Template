@@ -79,3 +79,67 @@ export async function validateMagicToken(
 
 	return { isValid: false };
 }
+
+/**
+ * Finds a magic token by its token ID.
+ *
+ * @param token - The token to find.
+ * @returns The magic token or null if not found or invalid.
+ */
+export async function findMagicTokenByToken(token: string) {
+	const magicToken = await prisma.magicToken.findUnique({
+		where: { token }
+	});
+
+	if (!magicToken || magicToken.used || new Date() > magicToken.expiresAt) {
+		return null;
+	}
+
+	return magicToken;
+}
+
+/**
+ * Finds an active magic token for a specific email.
+ *
+ * @param email - The email to search for.
+ * @returns The active magic token or null if none found.
+ */
+export async function findActiveMagicTokenByEmail(email: string) {
+	return await prisma.magicToken.findFirst({
+		where: {
+			email,
+			used: false,
+			expiresAt: { gt: new Date() }
+		}
+	});
+}
+
+/**
+ * Finds a magic token by email and OTP code.
+ *
+ * @param email - The email associated with the token.
+ * @param otp - The OTP code to verify.
+ * @returns The magic token or null if not found or invalid.
+ */
+export async function findMagicTokenByEmailAndOtp(email: string, otp: string) {
+	return await prisma.magicToken.findFirst({
+		where: {
+			email,
+			otp,
+			used: false,
+			expiresAt: { gt: new Date() }
+		}
+	});
+}
+
+/**
+ * Marks a magic token as used.
+ *
+ * @param token - The token to mark as used.
+ */
+export async function markTokenAsUsed(token: string) {
+	await prisma.magicToken.update({
+		where: { token },
+		data: { used: true }
+	});
+}

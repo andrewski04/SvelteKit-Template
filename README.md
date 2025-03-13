@@ -47,7 +47,9 @@ The setup batch script will automatically handle the following steps, including 
 Simply run this after cloning the repository, then skip to the "Start Dev Server" step:
 `./setup.bat`
 
-If you have any issues with the setup script or want more details on the project, read the following steps.
+> **NOTE:** This command can be re-ran at any time to fix many issues regarding the environment or database. **THIS WILL CLEAR ALL DATABASE DATA!**
+
+If you have any issues with the setup script or want more details on the project (or are not running Windows), read the following steps.
 
 ## Install VSCode Extensions
 
@@ -89,7 +91,7 @@ Copy `.env.example` and rename copy to `.env` (be sure not to delete the example
 To start the SvelteKit dev server and run dependencies, enter the following command in the project directory.
 
 ```bash
-# Only needs ran if containers aren't already running
+# Only needs ran if containers aren't already running (they will be if the setup script was ran)
 docker compose up -d
 
 # Run dev server and open page in browser

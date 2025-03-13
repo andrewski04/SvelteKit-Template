@@ -1,6 +1,11 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import prisma from '$lib/server/prisma';
+import {
+	findActiveMagicTokenByEmail,
+	findMagicTokenByEmailAndOtp,
+	markTokenAsUsed
+} from '$lib/server/auth/magicToken';
+import { createUserIfNotExists } from '$lib/server/auth/user';
 import { createSession, setSessionTokenCookie } from '$lib/server/auth/session';
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -11,13 +16,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	}
 
 	// Check for active magic token
-	const activeMagicToken = await prisma.magicToken.findFirst({
-		where: {
-			email,
-			used: false,
-			expiresAt: { gt: new Date() }
-		}
-	});
+	const activeMagicToken = await findActiveMagicTokenByEmail(email);
 
 	if (!activeMagicToken) {
 		throw redirect(303, '/auth/login');
@@ -37,33 +36,17 @@ export const actions: Actions = {
 		}
 
 		// Find the token by email and OTP
-		const magicToken = await prisma.magicToken.findFirst({
-			where: {
-				email,
-				otp,
-				used: false,
-				expiresAt: { gt: new Date() }
-			}
-		});
+		const magicToken = await findMagicTokenByEmailAndOtp(email, otp);
 
 		if (!magicToken) {
 			return { success: false, error: 'Invalid or expired verification code' };
 		}
 
 		// Mark token as used
-		await prisma.magicToken.update({
-			where: { token: magicToken.token },
-			data: { used: true }
-		});
+		await markTokenAsUsed(magicToken.token);
 
 		// Find or create the user
-		let user = await prisma.user.findUnique({ where: { email } });
-
-		if (!user) {
-			user = await prisma.user.create({
-				data: { email }
-			});
-		}
+		const user = await createUserIfNotExists(email);
 
 		const { token, session } = await createSession(user.id);
 
