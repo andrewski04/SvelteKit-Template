@@ -45,6 +45,8 @@ Install [Docker](https://docs.docker.com/desktop/setup/install/windows-install/)
 
 ## Install VSCode Extensions
 
+> **Hint**: You should be prompted to install these extensions when opening the workspace for the first time. Otherwise, navigate to extensions with the workpace open and search for `@recommended`.
+
 Install the following VSCode extensions:
 
 - Svelte for VSCode
@@ -54,6 +56,7 @@ Install the following VSCode extensions:
 - Prettier
 - ESLint
 - Prisma
+- npm Intellisense
 
 Restart VSCode to ensure extensions run.
 
