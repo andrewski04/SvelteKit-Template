@@ -10,6 +10,19 @@ export const load: PageServerLoad = async ({ url }) => {
 		throw redirect(303, '/auth/login');
 	}
 
+	// Check for active magic token
+	const activeMagicToken = await prisma.magicToken.findFirst({
+		where: {
+			email,
+			used: false,
+			expiresAt: { gt: new Date() }
+		}
+	});
+
+	if (!activeMagicToken) {
+		throw redirect(303, '/auth/login');
+	}
+
 	return { email };
 };
 
@@ -55,6 +68,9 @@ export const actions: Actions = {
 		const { token, session } = await createSession(user.id);
 
 		setSessionTokenCookie({ cookies }, token, session.expiresAt);
+
+		// device_id not needed after authentication
+		cookies.delete('device_id', { path: '/' });
 
 		throw redirect(303, '/dashboard');
 	}

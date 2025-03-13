@@ -43,6 +43,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 
 		setSessionTokenCookie({ cookies }, token, session.expiresAt);
 
+		cookies.delete('device_id', { path: '/' });
 		throw redirect(303, '/dashboard');
 	}
 
