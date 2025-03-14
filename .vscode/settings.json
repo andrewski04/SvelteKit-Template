@@ -19,5 +19,9 @@
     "editor.quickSuggestions": {
         "strings": true
     },
-    "cody.chat.preInstruction": "Use Svelte 5 runes syntax, and routes like: auth/+page.svelte, auth/+page.server.ts, api/+server.ts"
+    "openctx.providers": {
+        "https://openctx.org/npm/@openctx/provider-devdocs": {
+        "urls": ["https://devdocs.io/svelte/", "https://devdocs.io/tailwindcss/", "https://devdocs.io/typescript/",]
+        },
+    }
 }

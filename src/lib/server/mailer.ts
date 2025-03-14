@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { validateEmail } from '$lib/validation';
+import { validateEmail } from '$lib/util/validation';
 
 /**
  * Nodemailer transporter configured using environment variables.

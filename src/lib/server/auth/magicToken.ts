@@ -2,7 +2,7 @@ import { prisma } from '$lib/server/prisma';
 import crypto from 'crypto';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeHexLowerCase } from '@oslojs/encoding';
-import { validateEmail } from '$lib/validation';
+import { validateEmail } from '$lib/util/validation';
 
 /**
  * Creates a new magic token for the given email and device ID.

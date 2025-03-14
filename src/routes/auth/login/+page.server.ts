@@ -3,7 +3,7 @@ import type { Actions } from './$types';
 import { createMagicToken } from '$lib/server/auth/magicToken';
 import { sendMagicLink } from '$lib/server/mailer';
 import { nanoid } from 'nanoid';
-import { validateEmail } from '$lib/validation';
+import { validateEmail } from '$lib/util/validation';
 
 export const actions: Actions = {
 	// handles email input for passwordless login

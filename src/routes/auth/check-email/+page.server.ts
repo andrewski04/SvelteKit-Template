@@ -7,7 +7,7 @@ import {
 } from '$lib/server/auth/magicToken';
 import { createUserIfNotExists } from '$lib/server/auth/user';
 import { createSession, setSessionTokenCookie } from '$lib/server/auth/session';
-import { validateEmail } from '$lib/validation';
+import { validateEmail } from '$lib/util/validation';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const email = url.searchParams.get('email');

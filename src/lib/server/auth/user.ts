@@ -1,6 +1,6 @@
 import { prisma } from '$lib/server/prisma';
 import type { User } from '@prisma/client';
-import { validateEmail } from '$lib/validation';
+import { validateEmail } from '$lib/util/validation';
 
 /**
  * Finds a user by their email address.
