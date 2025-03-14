@@ -116,8 +116,6 @@ call code --install-extension dbaeumer.vscode-eslint
 call code --install-extension prisma.prisma
 call code --install-extension christian-kohler.npm-intellisense
 
-call code --install-extension vascosoares.roblox-epic-snippets
-
 call npm run check
 if %errorlevel% neq 0 (
     echo npm check failed, try running the dev server (non-fatal issue)

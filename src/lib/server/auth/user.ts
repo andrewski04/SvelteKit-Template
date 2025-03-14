@@ -1,6 +1,7 @@
 import { prisma } from '$lib/server/prisma';
 import type { User } from '@prisma/client';
 import { validateEmail } from '$lib/util/validation';
+import { err, ok, AppError, type Result } from '$lib/util/error';
 
 /**
  * Finds a user by their email address.
@@ -20,11 +21,9 @@ export async function findUserByEmail(email: string) {
  * @param email - The email address of the user.
  * @returns The existing or newly created user.
  */
-export async function createUserIfNotExists(
-	email: string
-): Promise<{ user: User } | { error: string }> {
-	if (!email || !validateEmail(email).valid) {
-		return { error: 'Invalid email' };
+export async function createUserIfNotExists(email: string): Promise<Result<{ user: User }>> {
+	if (!email || !validateEmail(email).isOk()) {
+		return err(new AppError('Invalid email', 'ERR_INVALID_EMAIL'));
 	}
 
 	let user = await findUserByEmail(email);
@@ -35,5 +34,5 @@ export async function createUserIfNotExists(
 		});
 	}
 
-	return { user };
+	return ok({ user });
 }

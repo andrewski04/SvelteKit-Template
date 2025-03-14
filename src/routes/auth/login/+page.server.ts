@@ -13,7 +13,7 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
 
-		if (!email || !validateEmail(email).valid) {
+		if (!email || !validateEmail(email).isOk()) {
 			return { success: false, error: 'Valid email is required' };
 		}
 
@@ -31,16 +31,16 @@ export const actions: Actions = {
 		}
 
 		const tokenResult = await createMagicToken(email, deviceId);
-		if ('error' in tokenResult) {
-			return { success: false, error: tokenResult.error };
+		if (tokenResult.isErr()) {
+			return { success: false, error: tokenResult.error.message };
 		}
-		const { token } = tokenResult;
+		const { token } = tokenResult.unwrap();
 
 		const baseUrl = `${url.protocol}//${url.host}`;
 
 		const result = await sendMagicLink(email, token, baseUrl);
-		if (result?.error) {
-			return { success: false, error: result.error };
+		if (result.isErr()) {
+			return { success: false, error: result.error.message };
 		}
 
 		throw redirect(303, `/auth/check-email?email=${encodeURIComponent(email)}`);

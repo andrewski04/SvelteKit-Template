@@ -25,14 +25,17 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	if (deviceId && deviceId === magicToken.deviceId) {
 		await invalidateMagicToken(magicToken.hashedToken, true);
 
-		// Find or create the user
 		const createUserResult = await createUserIfNotExists(magicToken.email);
-		if ('error' in createUserResult) {
-			throw redirect(303, '/auth/login?error=user_not_found');
+		if (createUserResult.isErr()) {
+			throw redirect(303, `/auth/login?error=${createUserResult.error.code}`);
 		}
-		const { user } = createUserResult;
+		const { user } = createUserResult.unwrap();
 
-		const { session, token } = await createSession(user.id);
+		const sessionResult = await createSession(user.id);
+		if (sessionResult.isErr()) {
+			throw redirect(303, '/auth/login?error=session_error');
+		}
+		const { session, token } = sessionResult.unwrap();
 
 		setSessionTokenCookie({ cookies }, token, session.expiresAt);
 

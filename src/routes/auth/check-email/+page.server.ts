@@ -12,7 +12,7 @@ import { validateEmail } from '$lib/util/validation';
 export const load: PageServerLoad = async ({ url }) => {
 	const email = url.searchParams.get('email');
 
-	if (!email || !validateEmail(email).valid) {
+	if (!email || !validateEmail(email).isOk()) {
 		throw redirect(303, '/auth/login');
 	}
 
@@ -46,14 +46,22 @@ export const actions: Actions = {
 		await invalidateMagicToken(magicToken.hashedToken, true);
 
 		const createUserResult = await createUserIfNotExists(email);
-		if ('error' in createUserResult) {
-			return { success: false, error: createUserResult.error };
+		if (createUserResult.isErr()) {
+			return { success: false, error: createUserResult.error.message };
 		}
-		const { user } = createUserResult;
+		const { user } = createUserResult.unwrap();
 
-		const { token, session } = await createSession(user.id);
+		const sessionResult = await createSession(user.id);
 
-		setSessionTokenCookie({ cookies }, token, session.expiresAt);
+		if (sessionResult.isErr()) {
+			return { success: false, error: sessionResult.error.message };
+		}
+
+		setSessionTokenCookie(
+			{ cookies },
+			sessionResult.value.token,
+			sessionResult.value.session.expiresAt
+		);
 
 		// device_id not needed after authentication
 		cookies.delete('device_id', { path: '/' });

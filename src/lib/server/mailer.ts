@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import { validateEmail } from '$lib/util/validation';
+import { err, ok, AppError, type Result } from '$lib/util/error';
 
 /**
  * Nodemailer transporter configured using environment variables.
@@ -28,9 +29,9 @@ export async function sendMagicLink(
 	email: string,
 	token: string,
 	baseUrl: string
-): Promise<void | { error: string }> {
-	if (!email || !validateEmail(email).valid) {
-		return { error: 'Invalid email' };
+): Promise<Result<void>> {
+	if (!email || !validateEmail(email).isOk()) {
+		return err(new AppError('Invalid email', 'ERR_INVALID_EMAIL'));
 	}
 
 	const magicLink = `${baseUrl}/auth/magic-link?token=${token}`;
@@ -42,6 +43,7 @@ export async function sendMagicLink(
 		html: `<p>Click the link below to log in, this will expire in 10 minutes:</p>
 		       <a href="${magicLink}">Login</a>`
 	});
+	return ok(undefined);
 }
 
 export default transporter;

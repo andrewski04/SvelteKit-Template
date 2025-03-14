@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeHexLowerCase } from '@oslojs/encoding';
 import { validateEmail } from '$lib/util/validation';
+import { err, ok, AppError, type Result } from '$lib/util/error';
 
 /**
  * Creates a new magic token for the given email and device ID.
@@ -14,9 +15,9 @@ import { validateEmail } from '$lib/util/validation';
 export async function createMagicToken(
 	email: string,
 	deviceId: string
-): Promise<{ token: string } | { error: string }> {
-	if (!email || !validateEmail(email).valid) {
-		return { error: 'Invalid email' };
+): Promise<Result<{ token: string }>> {
+	if (!email || !validateEmail(email).isOk()) {
+		return err(new AppError('Invalid email', 'ERR_INVALID_EMAIL'));
 	}
 
 	// generate magic token and hash for storage
@@ -36,7 +37,7 @@ export async function createMagicToken(
 		}
 	});
 
-	return { token };
+	return ok({ token });
 }
 
 /**
@@ -112,7 +113,7 @@ export async function invalidateMagicToken(token: string, hashed: boolean) {
  * @param rawToken - The raw token to generate OTP for.
  * @returns The generated OTP.
  */
-export async function generateOtp(rawToken: string) {
+export async function generateOtp(rawToken: string): Promise<Result<string>> {
 	const hashedToken = encodeHexLowerCase(sha256(new TextEncoder().encode(rawToken)));
 
 	// generate OTP and hash for storage
@@ -120,11 +121,15 @@ export async function generateOtp(rawToken: string) {
 	const otp = otpValue.toString().padStart(6, '0');
 	const hashedOtp = encodeHexLowerCase(sha256(new TextEncoder().encode(otp)));
 
-	// update magicToken in databse
-	await prisma.magicToken.update({
-		where: { hashedToken },
-		data: { hashedOtp }
-	});
+	try {
+		// update magicToken in databse
+		await prisma.magicToken.update({
+			where: { hashedToken },
+			data: { hashedOtp }
+		});
+	} catch {
+		return err(new AppError('Error generating OTP', 'ERR_GENERATE_OTP'));
+	}
 
-	return otp;
+	return ok(otp);
 }

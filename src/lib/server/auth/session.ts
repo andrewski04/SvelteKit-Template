@@ -3,6 +3,7 @@ import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/enco
 import { sha256 } from '@oslojs/crypto/sha2';
 import type { User, Session } from '@prisma/client';
 import type { RequestEvent } from '@sveltejs/kit';
+import { err, ok, AppError, type Result } from '$lib/util/error';
 
 // API to manage user session tokens
 // Session tokens are stored in cookies to authenticate users,
@@ -28,7 +29,9 @@ function generateSessionToken(): string {
  * @param userId - User ID to create session for.
  * @returns - An object containing the session object and the token.
  */
-export async function createSession(userId: string): Promise<{ session: Session; token: string }> {
+export async function createSession(
+	userId: string
+): Promise<Result<{ session: Session; token: string }>> {
 	const token = generateSessionToken();
 	const hashedToken = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session: Session = {
@@ -39,7 +42,10 @@ export async function createSession(userId: string): Promise<{ session: Session;
 	await prisma.session.create({
 		data: session
 	});
-	return { session, token };
+	if (!session) {
+		return err(new AppError('Error creating session', 'ERR_CREATE_SESSION'));
+	}
+	return ok({ session, token });
 }
 
 /**

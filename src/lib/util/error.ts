@@ -2,11 +2,15 @@
  * Standard error message to be used throughout the app
  */
 export class AppError {
+	readonly code: string;
+
 	constructor(
 		readonly message: string,
-		readonly code: string,
+		code: string = 'UNKNOWN_ERROR',
 		readonly statusCode: number = 500
-	) {}
+	) {
+		this.code = code.toUpperCase();
+	}
 
 	toString(): string {
 		return `${this.code} (${this.statusCode}): ${this.message}`;
@@ -18,7 +22,7 @@ export class AppError {
  *
  *
  * @example
- * const result: Result<string, AppError> = ok('success');
+ * const result: Result<string> = ok('success');
  * if (result.isOk()) {
  *   console.log(result.unwrap()); // 'success' - result.value contains the same value
  * } else {
@@ -33,14 +37,24 @@ export type Result<T> = Ok<T> | Err<AppError>;
 export class Ok<T> {
 	constructor(readonly value: T) {}
 
+	/**
+	 * @returns true if the result is Ok, false otherwise
+	 */
 	isOk(): this is Ok<T> {
 		return true;
 	}
 
+	/**
+	 * @returns true if the result is Err, false otherwise
+	 */
 	isErr(): false {
 		return false;
 	}
 
+	/**
+	 * @returns the value of the Ok result
+	 * @throws Error if the result is Err
+	 */
 	unwrap(): T {
 		return this.value;
 	}
@@ -52,14 +66,26 @@ export class Ok<T> {
 export class Err<E> {
 	constructor(readonly error: E) {}
 
+	/**
+	 * @returns true if the result is Ok, false otherwise
+	 */
 	isOk(): false {
 		return false;
 	}
 
+	/**
+	 * @returns true if the result is Err, false otherwise
+	 */
 	isErr(): this is Err<E> {
 		return true;
 	}
 
+	/**
+	 * @returns the error of the Err result
+	 * @throws Error if the result is Ok
+	 *
+	 * Err typically shouldn't be unwrapped, unless the error is fatal
+	 */
 	unwrap(): never {
 		throw new Error(`Tried to unwrap an Err value: ${this.error}`);
 	}
@@ -70,6 +96,11 @@ export class Err<E> {
  *
  * @param value - The value to be wrapped in the Ok result
  * @returns An Ok result with the given value
+ *
+ * @example
+ * const function(): Result<> {
+ *   return ok('success'); // ok.value == "success"
+ * }
  */
 export function ok<T>(value: T): Ok<T> {
 	return new Ok(value);
@@ -80,6 +111,11 @@ export function ok<T>(value: T): Ok<T> {
  *
  * @param error - The error to be wrapped in the Err result
  * @returns An Err result with the given error
+ *
+ * @example
+ * const function(): Result<string> {
+ *   return err(new AppError('error', 'ERR_CODE'));
+ * }
  */
 export function err<E>(error: E): Err<E> {
 	return new Err(error);

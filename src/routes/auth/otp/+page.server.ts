@@ -18,5 +18,9 @@ export const load: PageServerLoad = async ({ url }) => {
 
 	const otp = await generateOtp(token);
 
-	return { otp };
+	if (otp.isErr()) {
+		throw redirect(303, '/auth/login');
+	}
+
+	return { otp: otp.value };
 };
