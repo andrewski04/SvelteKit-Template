@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { findMagicTokenByToken } from '$lib/server/auth/magicToken';
+import { findMagicTokenByToken, generateOtp } from '$lib/server/auth/magicToken';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const token = url.searchParams.get('token');
@@ -16,5 +16,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		return { otp: null };
 	}
 
-	return { otp: magicToken.otp };
+	const otp = await generateOtp(token);
+
+	return { otp };
 };

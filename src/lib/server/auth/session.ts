@@ -83,13 +83,16 @@ export async function validateSessionToken(
 }
 
 /**
- * Invalidates a session by its ID.
+ * Invalidates a session by its token.
  *
- * @param sessionId - The ID of the session to invalidate.
+ * @param sessionToken - The token of the session to invalidate.
+ * @param hashed - True if the token is already hashed, false if raw.
  */
-export async function invalidateSession(sessionId: string): Promise<void> {
-	const hashedSessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(sessionId)));
-	await prisma.session.delete({ where: { hashedToken: hashedSessionId } });
+export async function invalidateSession(sessionToken: string, hashed: boolean): Promise<void> {
+	if (!hashed) {
+		sessionToken = encodeHexLowerCase(sha256(new TextEncoder().encode(sessionToken)));
+	}
+	await prisma.session.delete({ where: { hashedToken: sessionToken } });
 }
 
 /**

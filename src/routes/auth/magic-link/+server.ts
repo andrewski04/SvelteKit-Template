@@ -5,17 +5,17 @@ import { createUserIfNotExists } from '$lib/server/auth/user';
 import { createSession, setSessionTokenCookie } from '$lib/server/auth/session';
 
 export const GET: RequestHandler = async ({ url, cookies }) => {
-	const magicTokenId = url.searchParams.get('token');
+	const token = url.searchParams.get('token');
 
-	if (!magicTokenId) {
-		throw redirect(303, '/auth/login');
+	if (!token) {
+		throw redirect(303, '/auth/login?error=invalid_token');
 	}
 
 	// Get device ID from cookies
 	const deviceId = cookies.get('device_id');
 
 	// Find the magic token
-	const magicToken = await findMagicTokenByToken(magicTokenId);
+	const magicToken = await findMagicTokenByToken(token);
 
 	if (!magicToken) {
 		throw redirect(303, '/auth/login?error=invalid_token');
@@ -23,7 +23,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 
 	// If same device ID, auto-authenticate
 	if (deviceId && deviceId === magicToken.deviceId) {
-		await invalidateMagicToken(magicTokenId);
+		await invalidateMagicToken(magicToken.hashedToken, true);
 
 		// Find or create the user
 		const user = await createUserIfNotExists(magicToken.email);
@@ -33,9 +33,9 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		setSessionTokenCookie({ cookies }, token, session.expiresAt);
 
 		cookies.delete('device_id', { path: '/' });
-		throw redirect(303, '/dashboard');
+		throw redirect(303, '/');
 	}
 
 	// If different device, redirect to OTP display page
-	throw redirect(303, `/auth/otp?token=${magicTokenId}`);
+	throw redirect(303, `/auth/otp?token=${token}`);
 };

@@ -25,7 +25,7 @@ model Session {
 
 model MagicToken {
   hashedToken  String   @id 
-  otp          String
+  hashedOtp    String?
   deviceId     String
   email        String
   expiresAt    DateTime

@@ -19,7 +19,7 @@ export const GET: RequestHandler = async ({ cookies }) => {
 		throw redirect(303, '/');
 	}
 
-	await invalidateSession(sessionToken);
+	await invalidateSession(sessionToken, false);
 	deleteSessionTokenCookie({ cookies });
 	throw redirect(303, '/');
 };

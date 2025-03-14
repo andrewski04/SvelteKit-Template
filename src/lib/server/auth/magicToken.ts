@@ -13,31 +13,25 @@ import { encodeHexLowerCase } from '@oslojs/encoding';
 export async function createMagicToken(
 	email: string,
 	deviceId: string
-): Promise<{ token: string; otp: string }> {
+): Promise<{ token: string }> {
 	// generate magic token and hash for storage
 	const token = crypto.randomBytes(32).toString('hex');
 	const hashedToken = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 
-	// generate OTP and hash for storage
-	const otpValue = crypto.randomBytes(3).readUIntBE(0, 3) % 1000000;
-	const otp = otpValue.toString().padStart(6, '0');
-	const hashedOtp = encodeHexLowerCase(sha256(new TextEncoder().encode(otp)));
-
 	// Set expiration time (10 minutes from now)
 	const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-	// Store the token, OTP, and device ID in the database (using token as ID)
+	// Store the token and device ID in the database
 	await prisma.magicToken.create({
 		data: {
-			token: hashedToken,
-			otp: hashedOtp,
+			hashedToken,
 			deviceId,
 			email,
 			expiresAt
 		}
 	});
 
-	return { token, otp };
+	return { token };
 }
 
 /**
@@ -49,7 +43,7 @@ export async function createMagicToken(
 export async function findMagicTokenByToken(token: string) {
 	const hashedToken = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const magicToken = await prisma.magicToken.findUnique({
-		where: { token: hashedToken }
+		where: { hashedToken }
 	});
 
 	if (!magicToken || new Date() > magicToken.expiresAt) {
@@ -86,7 +80,7 @@ export async function findMagicTokenByEmailAndOtp(email: string, otp: string) {
 	return await prisma.magicToken.findFirst({
 		where: {
 			email,
-			otp: hashedOtp,
+			hashedOtp,
 			expiresAt: { gt: new Date() }
 		}
 	});
@@ -95,11 +89,37 @@ export async function findMagicTokenByEmailAndOtp(email: string, otp: string) {
 /**
  * Marks a magic token as used.
  *
- * @param token - The raw token to mark as used.
+ * @param token - The token to mark as used.
+ * @param hashed - True if the token is already hashed, false if raw.
  */
-export async function invalidateMagicToken(token: string) {
-	const hashedToken = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+export async function invalidateMagicToken(token: string, hashed: boolean) {
+	if (!hashed) {
+		token = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	}
 	await prisma.magicToken.delete({
-		where: { token: hashedToken }
+		where: { hashedToken: token }
 	});
+}
+
+/**
+ * Generates a new OTP for a magic token.
+ *
+ * @param rawToken - The raw token to generate OTP for.
+ * @returns The generated OTP.
+ */
+export async function generateOtp(rawToken: string) {
+	const hashedToken = encodeHexLowerCase(sha256(new TextEncoder().encode(rawToken)));
+
+	// generate OTP and hash for storage
+	const otpValue = crypto.randomBytes(3).readUIntBE(0, 3) % 1000000;
+	const otp = otpValue.toString().padStart(6, '0');
+	const hashedOtp = encodeHexLowerCase(sha256(new TextEncoder().encode(otp)));
+
+	// update magicToken in databse
+	await prisma.magicToken.update({
+		where: { hashedToken },
+		data: { hashedOtp }
+	});
+
+	return otp;
 }

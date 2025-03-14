@@ -42,7 +42,7 @@ export const actions: Actions = {
 			return { success: false, error: 'Invalid or expired verification code' };
 		}
 
-		await invalidateMagicToken(magicToken.token);
+		await invalidateMagicToken(magicToken.hashedToken, true);
 
 		// Find or create the user
 		const user = await createUserIfNotExists(email);
@@ -56,4 +56,4 @@ export const actions: Actions = {
 
 		throw redirect(303, '/');
 	}
-};
+} satisfies Actions;
