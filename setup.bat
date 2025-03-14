@@ -1,7 +1,22 @@
 @echo off
+setlocal enabledelayedexpansion
+
+REM Initialize flags
+set REMOVE_DOCKER=1
+set COPY_ENV=1
+
+REM Parse command line arguments
+:parse_args 
+if "%~1"=="" goto :end_parse_args
+if /i "%~1"=="--keep-docker" set REMOVE_DOCKER=0
+if /i "%~1"=="-k" set REMOVE_DOCKER=0
+if /i "%~1"=="--no-env" set COPY_ENV=0
+if /i "%~1"=="-n" set COPY_ENV=0
+shift
+goto :parse_args
+:end_parse_args
+
 echo Checking prerequisites...
-
-
 
 REM Check if VS Code is installed
 call code --version >nul 2>&1
@@ -24,13 +39,18 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-REM Copy env file
-echo.
-echo Setting up environment...
-copy .env.example .env
-if %errorlevel% neq 0 (
-    echo Failed to copy .env file
-    exit /b 1
+REM Copy env file (if flag set)
+if %COPY_ENV%==1 (
+    echo.
+    echo Setting up environment...
+    copy .env.example .env
+    if %errorlevel% neq 0 (
+        echo Failed to copy .env file
+        exit /b 1
+    )
+) else (
+    echo.
+    echo Skipping .env file setup
 )
 
 REM Install dependencies
@@ -42,10 +62,16 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-REM Remove docker volumes
-echo.
-echo Resetting Docker volumes...
-call docker-compose down -v
+REM Remove docker volumes (if flag set)
+if %REMOVE_DOCKER%==1 (
+    echo.
+    echo Resetting Docker volumes...
+    call docker-compose down -v
+) else (
+    echo.
+    echo Skipping Docker volume reset
+)
+
 
 REM Start Docker services
 echo.

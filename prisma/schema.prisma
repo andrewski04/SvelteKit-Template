@@ -16,19 +16,18 @@ model User {
 }
 
 model Session {
-  id        String   @id
-  userId    String
-  expiresAt DateTime
+  hashedToken   String   @id
+  userId        String
+  expiresAt     DateTime
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model MagicToken {
-  token     String   @id 
-  otp       String
-  deviceId  String
-  email     String
-  expiresAt DateTime
-  used      Boolean  @default(false)
-  createdAt DateTime @default(now())
+  hashedToken  String   @id 
+  otp          String
+  deviceId     String
+  email        String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
 }

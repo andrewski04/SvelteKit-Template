@@ -3,7 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import {
 	findActiveMagicTokenByEmail,
 	findMagicTokenByEmailAndOtp,
-	markTokenAsUsed
+	invalidateMagicToken
 } from '$lib/server/auth/magicToken';
 import { createUserIfNotExists } from '$lib/server/auth/user';
 import { createSession, setSessionTokenCookie } from '$lib/server/auth/session';
@@ -42,8 +42,7 @@ export const actions: Actions = {
 			return { success: false, error: 'Invalid or expired verification code' };
 		}
 
-		// Mark token as used
-		await markTokenAsUsed(magicToken.token);
+		await invalidateMagicToken(magicToken.token);
 
 		// Find or create the user
 		const user = await createUserIfNotExists(email);
@@ -55,6 +54,6 @@ export const actions: Actions = {
 		// device_id not needed after authentication
 		cookies.delete('device_id', { path: '/' });
 
-		throw redirect(303, '/dashboard');
+		throw redirect(303, '/');
 	}
 };

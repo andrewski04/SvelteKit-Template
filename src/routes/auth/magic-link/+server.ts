@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { findMagicTokenByToken, markTokenAsUsed } from '$lib/server/auth/magicToken';
+import { findMagicTokenByToken, invalidateMagicToken } from '$lib/server/auth/magicToken';
 import { createUserIfNotExists } from '$lib/server/auth/user';
 import { createSession, setSessionTokenCookie } from '$lib/server/auth/session';
 
@@ -23,8 +23,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 
 	// If same device ID, auto-authenticate
 	if (deviceId && deviceId === magicToken.deviceId) {
-		// Mark token as used
-		await markTokenAsUsed(magicTokenId);
+		await invalidateMagicToken(magicTokenId);
 
 		// Find or create the user
 		const user = await createUserIfNotExists(magicToken.email);

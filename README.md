@@ -47,7 +47,7 @@ The setup batch script will automatically handle the following steps, including 
 Simply run this after cloning the repository, then skip to the "Start Dev Server" step:
 `./setup.bat`
 
-> **NOTE:** This command can be re-ran at any time to fix many issues regarding the environment or database. **THIS WILL CLEAR ALL DATABASE DATA!**
+> **NOTE:** This can be ran to fix many issues related to the environment or database. **By default, this will reset all docker containers (the database) and overwrite the local `.env` file.** Use flags `--keep-docker`/`-k` and `--no-env`/`-n` to keep containers and environment variables.
 
 If you have any issues with the setup script or want more details on the project (or are not running Windows), read the following steps.
 
@@ -137,3 +137,8 @@ In development, you can view any sent emails from MailDev by navigating to http:
 - For **[auth] TypeError: Cannot read properties of undefined (reading 'create')** or other database errors, run `npx prisma migrate dev` to synchronize the client and DB.
 
 - If database migrations fail to apply (and the Docker containers are running), run `docker compose down -v` to completely clear the database. This will delete all data, since this is just for development.
+
+# TODO
+
+- Add testing (unit and web)
+- Add logger
