@@ -26,7 +26,11 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		await invalidateMagicToken(magicToken.hashedToken, true);
 
 		// Find or create the user
-		const user = await createUserIfNotExists(magicToken.email);
+		const createUserResult = await createUserIfNotExists(magicToken.email);
+		if ('error' in createUserResult) {
+			throw redirect(303, '/auth/login?error=user_not_found');
+		}
+		const { user } = createUserResult;
 
 		const { session, token } = await createSession(user.id);
 

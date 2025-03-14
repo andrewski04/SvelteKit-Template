@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { validateEmail } from '$lib/validation';
 
 /**
  * Nodemailer transporter configured using environment variables.
@@ -23,7 +24,15 @@ const transporter = nodemailer.createTransport({
  * @param token - The magic token.
  * @param baseUrl - The base URL for the magic link. (e.g. http://localhost:5173)
  */
-export async function sendMagicLink(email: string, token: string, baseUrl: string): Promise<void> {
+export async function sendMagicLink(
+	email: string,
+	token: string,
+	baseUrl: string
+): Promise<void | { error: string }> {
+	if (!email || !validateEmail(email).valid) {
+		return { error: 'Invalid email' };
+	}
+
 	const magicLink = `${baseUrl}/auth/magic-link?token=${token}`;
 
 	await transporter.sendMail({

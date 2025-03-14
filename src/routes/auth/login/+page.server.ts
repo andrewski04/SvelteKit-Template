@@ -3,6 +3,7 @@ import type { Actions } from './$types';
 import { createMagicToken } from '$lib/server/auth/magicToken';
 import { sendMagicLink } from '$lib/server/mailer';
 import { nanoid } from 'nanoid';
+import { validateEmail } from '$lib/validation';
 
 export const actions: Actions = {
 	// handles email input for passwordless login
@@ -12,8 +13,8 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
 
-		if (!email) {
-			return { success: false, error: 'Email is required' };
+		if (!email || !validateEmail(email).valid) {
+			return { success: false, error: 'Valid email is required' };
 		}
 
 		// Create or reuse a device identifier cookie,
@@ -29,10 +30,18 @@ export const actions: Actions = {
 			});
 		}
 
-		const { token } = await createMagicToken(email, deviceId);
+		const tokenResult = await createMagicToken(email, deviceId);
+		if ('error' in tokenResult) {
+			return { success: false, error: tokenResult.error };
+		}
+		const { token } = tokenResult;
 
 		const baseUrl = `${url.protocol}//${url.host}`;
-		await sendMagicLink(email, token, baseUrl);
+
+		const result = await sendMagicLink(email, token, baseUrl);
+		if (result?.error) {
+			return { success: false, error: result.error };
+		}
 
 		throw redirect(303, `/auth/check-email?email=${encodeURIComponent(email)}`);
 	}

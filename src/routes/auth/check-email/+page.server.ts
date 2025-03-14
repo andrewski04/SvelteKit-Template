@@ -7,11 +7,12 @@ import {
 } from '$lib/server/auth/magicToken';
 import { createUserIfNotExists } from '$lib/server/auth/user';
 import { createSession, setSessionTokenCookie } from '$lib/server/auth/session';
+import { validateEmail } from '$lib/validation';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const email = url.searchParams.get('email');
 
-	if (!email) {
+	if (!email || !validateEmail(email).valid) {
 		throw redirect(303, '/auth/login');
 	}
 
@@ -44,8 +45,11 @@ export const actions: Actions = {
 
 		await invalidateMagicToken(magicToken.hashedToken, true);
 
-		// Find or create the user
-		const user = await createUserIfNotExists(email);
+		const createUserResult = await createUserIfNotExists(email);
+		if ('error' in createUserResult) {
+			return { success: false, error: createUserResult.error };
+		}
+		const { user } = createUserResult;
 
 		const { token, session } = await createSession(user.id);
 

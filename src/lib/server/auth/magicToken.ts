@@ -2,6 +2,7 @@ import { prisma } from '$lib/server/prisma';
 import crypto from 'crypto';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeHexLowerCase } from '@oslojs/encoding';
+import { validateEmail } from '$lib/validation';
 
 /**
  * Creates a new magic token for the given email and device ID.
@@ -13,7 +14,11 @@ import { encodeHexLowerCase } from '@oslojs/encoding';
 export async function createMagicToken(
 	email: string,
 	deviceId: string
-): Promise<{ token: string }> {
+): Promise<{ token: string } | { error: string }> {
+	if (!email || !validateEmail(email).valid) {
+		return { error: 'Invalid email' };
+	}
+
 	// generate magic token and hash for storage
 	const token = crypto.randomBytes(32).toString('hex');
 	const hashedToken = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
