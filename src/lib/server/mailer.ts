@@ -16,6 +16,13 @@ const transporter = nodemailer.createTransport({
 	}
 });
 
+/**
+ * Sends a magic link to the user's email.
+ *
+ * @param email - The email address to send the link to.
+ * @param token - The magic token.
+ * @param baseUrl - The base URL for the magic link. (e.g. http://localhost:5173)
+ */
 export async function sendMagicLink(email: string, token: string, baseUrl: string): Promise<void> {
 	const magicLink = `${baseUrl}/auth/magic-link?token=${token}`;
 

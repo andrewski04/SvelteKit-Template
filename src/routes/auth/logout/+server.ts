@@ -7,7 +7,7 @@ import {
 	validateSessionToken
 } from '$lib/server/auth/session';
 
-export const GET: RequestHandler = async ({ cookies }) => {
+export const POST: RequestHandler = async ({ cookies }) => {
 	const sessionToken = getSessionTokenCookie({ cookies });
 	if (!sessionToken) {
 		throw redirect(303, '/');

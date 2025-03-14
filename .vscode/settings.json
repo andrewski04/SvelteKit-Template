@@ -19,6 +19,5 @@
     "editor.quickSuggestions": {
         "strings": true
     },
-    "cody.chat.preInstruction": "Project uses: TailwindCSS, Typescript, Sveltekit 5 (uses runes), Svelte routes are named directories with the +server/page inside (ex: auth/+page.svelte, auth/+page.server.ts, api/+server.ts) "
+    "cody.chat.preInstruction": "Use Svelte 5 runes syntax, and routes like: auth/+page.svelte, auth/+page.server.ts, api/+server.ts"
 }
-  
