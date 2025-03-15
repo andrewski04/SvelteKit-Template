@@ -1,13 +1,14 @@
 import {
 	validateSessionToken,
 	setSessionTokenCookie,
-	deleteSessionTokenCookie
+	deleteSessionTokenCookie,
+	getSessionTokenCookie
 } from '$lib/server/auth/session';
 import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	// Get the session token from cookies
-	const token = event.cookies.get('session');
+	const token = getSessionTokenCookie(event);
 
 	if (!token) {
 		// No session, ensure user is null

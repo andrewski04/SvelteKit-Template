@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 	const { data }: PageProps = $props();
-	const { users, error } = data;
+	const { users, error, currentUser } = data;
 </script>
 
 <div class="flex min-h-screen flex-col items-center bg-gray-900 p-6 text-white">
@@ -14,7 +14,11 @@
 			<ul class="divide-y divide-gray-700">
 				{#each users as user}
 					<li class="p-3 transition hover:bg-gray-700">
-						<p class="mb-1 text-lg font-medium">{user.email}</p>
+						<p class="mb-1 text-lg font-medium">
+							{user.email}
+							{#if user.id == currentUser?.id}(Current User){/if}
+						</p>
+						<p class="text-md text-gray-300">Role: {user.role}</p>
 						<p class="text-md text-gray-300">First name: {user.firstName ?? 'N/A'}</p>
 						<p class="text-md text-gray-300">Last name: {user.lastName ?? 'N/A'}</p>
 						<p class="mt-2 text-sm text-gray-400">ID: {user.id}</p>

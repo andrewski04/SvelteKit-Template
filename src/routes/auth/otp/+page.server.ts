@@ -6,20 +6,19 @@ export const load: PageServerLoad = async ({ url }) => {
 	const token = url.searchParams.get('token');
 
 	if (!token) {
-		throw redirect(303, '/auth/login');
+		throw redirect(303, '/auth/login?error=invalid_token');
 	}
 
-	// Find the magic token
 	const magicToken = await findMagicTokenByToken(token);
 
 	if (!magicToken) {
-		return { otp: null };
+		throw redirect(303, '/auth/login?error=invalid_token');
 	}
 
 	const otp = await generateOtp(token);
 
 	if (otp.isErr()) {
-		throw redirect(303, '/auth/login');
+		throw redirect(303, '/auth/login?error=invalid_token');
 	}
 
 	return { otp: otp.value };
