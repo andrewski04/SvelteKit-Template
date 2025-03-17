@@ -11,6 +11,7 @@ describe('Error Utilities', () => {
 			expect(result.value).toBe('test data');
 			// @ts-expect-error 'Error' is not supposed to be on type 'Ok'
 			expect(result.error).toBeUndefined();
+			expect(result.unwrap()).toBe('test data');
 		});
 	});
 
@@ -26,6 +27,7 @@ describe('Error Utilities', () => {
 			expect(result.error).toBe(error);
 			expect(result.error?.message).toBe('Test error');
 			expect(result.error?.code).toBe('TEST_ERROR');
+			expect(() => result.unwrapErr()).toThrowError();
 		});
 	});
 
@@ -37,6 +39,19 @@ describe('Error Utilities', () => {
 			expect(error.statusCode).toBe(500);
 			expect(error.message).toBe('Test error');
 			expect(error.code).toBe('TEST_ERROR');
+			expect(error.toString()).toBe('TEST_ERROR (500): Test error');
+		});
+	});
+
+	describe('AppError class unkown error', () => {
+		it('should create an error with message and code', () => {
+			const error = new AppError('Test error');
+
+			expect(error).toBeInstanceOf(Error);
+			expect(error.statusCode).toBe(500);
+			expect(error.message).toBe('Test error');
+			expect(error.code).toBe('ERR_UNKNOWN');
+			expect(error.toString()).toBe('ERR_UNKNOWN (500): Test error');
 		});
 	});
 });

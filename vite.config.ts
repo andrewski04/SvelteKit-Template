@@ -10,9 +10,15 @@ export default defineConfig({
 	test: {
 		environment: 'node',
 		coverage: {
-			include: ['src/**/*.{test,spec}.{js,ts}'],
 			provider: 'istanbul',
-			reporter: ['text', 'json', 'html']
+			reporter: ['text', 'json', 'html'],
+			include: ['src/**/*.{ts,js}'],
+			exclude: [
+				'src/**/*.{test,spec}.{js,ts}',
+				'src/**/*.d.ts',
+				'src/**/_*.{js,ts}',
+				'src/routes/**/*.{js,ts}'
+			]
 		}
 	}
 });

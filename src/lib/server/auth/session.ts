@@ -37,7 +37,8 @@ export async function createSession(
 	const session: Session = {
 		hashedToken,
 		userId,
-		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
+		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+		createdAt: new Date(Date.now())
 	};
 	await prisma.session.create({
 		data: session
@@ -74,8 +75,10 @@ export async function validateSessionToken(
 		await prisma.session.delete({ where: { hashedToken } });
 		return { session: null, user: null };
 	}
-	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
-		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
+
+	// if session expires within 12 hours, refresh it to the next 24 hours
+	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 12) {
+		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24);
 		await prisma.session.update({
 			where: {
 				hashedToken: session.hashedToken

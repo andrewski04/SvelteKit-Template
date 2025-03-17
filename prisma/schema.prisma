@@ -15,12 +15,14 @@ model User {
   // `user` or `admin`
   role       String       @default("user")
   sessions   Session[]
+  createdAt  DateTime     @default(now())
 }
 
 model Session {
   hashedToken   String   @id
   userId        String
   expiresAt     DateTime
+  createdAt     DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

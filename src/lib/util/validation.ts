@@ -14,8 +14,7 @@ export function validateEmail(email: string): Result<boolean> {
 	}
 
 	// RFC 5322 compliant regex for email validation
-	const emailRegex =
-		/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 	if (!emailRegex.test(email)) {
 		return err(new AppError('Invalid email', 'ERR_INVALID_EMAIL'));

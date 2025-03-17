@@ -6,11 +6,11 @@ export class AppError extends Error {
 
 	constructor(
 		readonly message: string,
-		code: string = 'UNKNOWN_ERROR',
+		code: string = 'ERR_UNKNOWN',
 		readonly statusCode: number = 500
 	) {
 		super(message);
-		this.code = code.toUpperCase();
+		this.code = code.toUpperCase().trim();
 	}
 
 	toString(): string {
@@ -56,7 +56,7 @@ export class Ok<T> {
 	 * @returns the value of the Ok result
 	 * @throws Error if the result is Err
 	 */
-	unwrapErr(): T {
+	unwrap(): T {
 		return this.value;
 	}
 }
@@ -87,7 +87,7 @@ export class Err<E> {
 	 *
 	 * Err typically shouldn't be unwrapped, unless the error is fatal
 	 */
-	unwrap(): never {
+	unwrapErr(): never {
 		throw new Error(`Tried to unwrap an Err value: ${this.error}`);
 	}
 }
