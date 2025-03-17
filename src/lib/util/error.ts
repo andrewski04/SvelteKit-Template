@@ -1,7 +1,7 @@
 /**
  * Standard error message to be used throughout the app
  */
-export class AppError {
+export class AppError extends Error {
 	readonly code: string;
 
 	constructor(
@@ -9,6 +9,7 @@ export class AppError {
 		code: string = 'UNKNOWN_ERROR',
 		readonly statusCode: number = 500
 	) {
+		super(message);
 		this.code = code.toUpperCase();
 	}
 
@@ -55,7 +56,7 @@ export class Ok<T> {
 	 * @returns the value of the Ok result
 	 * @throws Error if the result is Err
 	 */
-	unwrap(): T {
+	unwrapErr(): T {
 		return this.value;
 	}
 }
