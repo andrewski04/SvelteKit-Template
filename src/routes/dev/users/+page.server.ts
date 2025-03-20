@@ -4,6 +4,7 @@ import { requireAuth } from '$lib/server/auth/guard';
 
 export const load: PageServerLoad = async (event) => {
 	const { user } = requireAuth(event);
+
 	try {
 		const users = await prisma.user.findMany();
 		return {

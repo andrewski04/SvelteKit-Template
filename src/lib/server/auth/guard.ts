@@ -9,6 +9,8 @@ import type { User, Session } from '@prisma/client';
 /**
  * Requires authentication to access the route, allowing ANY user to access the route.
  *
+ * AUTH CHECKING IS NOT SECURE WHEN USED IN LAYOUT, be sure to check on a page level instead!!
+ *
  * @param event - The request event object
  * @param redirectTo - The URL to redirect to if not authenticated or authorized (default: '/auth/login')
  * @returns user and session if authenticated and authorized
@@ -34,6 +36,8 @@ export function requireAuth(
 
 /**
  * Requires authentication and authorization to access the route, allowing only users with the specified role to access the route.
+ *
+ * AUTH CHECKING IS NOT SECURE WHEN USED IN LAYOUT, be sure to check on a page level instead!!
  *
  * @param event - The request event object
  * @param role - The role to check for (`admin` or `user`)
