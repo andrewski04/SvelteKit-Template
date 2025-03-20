@@ -66,6 +66,12 @@ export const actions: Actions = {
 		// device_id not needed after authentication
 		cookies.delete('device_id', { path: '/' });
 
+		// TODO: User should have `setup-complete` field to track this
+		// A redirect handler should probably implemented, since this is used on every page handling auth.
+		if (!user.firstName || !user.lastName) {
+			throw redirect(303, '/user/account-setup');
+		}
+
 		throw redirect(303, '/');
 	}
 } satisfies Actions;
