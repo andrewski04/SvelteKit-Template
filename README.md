@@ -142,3 +142,4 @@ In development, you can view any sent emails from MailDev by navigating to http:
 
 - Add testing (unit and web)
 - Add logger
+- fix vuln: OTP can be used on different device than it was requested from

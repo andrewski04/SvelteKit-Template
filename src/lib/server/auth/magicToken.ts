@@ -16,6 +16,12 @@ export async function createMagicToken(
 	email: string,
 	deviceId: string
 ): Promise<Result<{ token: string }>> {
+	try {
+		await invalidateAllMagicTokens(email);
+	} catch {
+		return err(new AppError('Error creating magic token', 'ERR_CREATE_MAGIC_TOKEN'));
+	}
+
 	if (!email || !validateEmail(email).isOk()) {
 		return err(new AppError('Invalid email', 'ERR_INVALID_EMAIL'));
 	}
@@ -132,4 +138,17 @@ export async function generateOtp(rawToken: string): Promise<Result<string>> {
 	}
 
 	return ok(otp);
+}
+
+/**
+ * Invalidates all magic tokens for a given email.
+ *
+ * @param email - The email to invalidate tokens for.
+ */
+export async function invalidateAllMagicTokens(email: string) {
+	await prisma.magicToken.deleteMany({
+		where: {
+			email
+		}
+	});
 }

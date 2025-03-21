@@ -1,8 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { findMagicTokenByToken, invalidateMagicToken } from '$lib/server/auth/magicToken';
-import { createUserIfNotExists } from '$lib/server/auth/user';
-import { createSession, setSessionTokenCookie } from '$lib/server/auth/session';
+import { findMagicTokenByToken } from '$lib/server/auth/magicToken';
+import { authenticateUserWithMagicToken } from '$lib/server/auth/authService';
 
 export const GET: RequestHandler = async ({ url, cookies }) => {
 	const token = url.searchParams.get('token');
@@ -11,45 +10,30 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		throw redirect(303, '/auth/login?error=invalid_token');
 	}
 
-	// Get device ID from cookies
+	// device_id used to check if user is on the same device or should be shown the OTP page
 	const deviceId = cookies.get('device_id');
 
-	// Find the magic token
 	const magicToken = await findMagicTokenByToken(token);
 
 	if (!magicToken) {
 		throw redirect(303, '/auth/login?error=invalid_token');
 	}
 
-	// If same device ID, auto-authenticate
+	// if on same device, authenticate user and redirect
 	if (deviceId && deviceId === magicToken.deviceId) {
-		await invalidateMagicToken(magicToken.hashedToken, true);
+		const authResult = await authenticateUserWithMagicToken({
+			email: magicToken.email,
+			hashedMagicToken: magicToken.hashedToken,
+			cookies,
+			redirectTo: '/'
+		});
 
-		const createUserResult = await createUserIfNotExists(magicToken.email);
-		if (createUserResult.isErr()) {
-			throw redirect(303, `/auth/login?error=${createUserResult.error.code}`);
-		}
-		const { user } = createUserResult.unwrap();
-
-		const sessionResult = await createSession(user.id);
-		if (sessionResult.isErr()) {
-			throw redirect(303, '/auth/login?error=session_error');
-		}
-		const { session, token } = sessionResult.unwrap();
-
-		setSessionTokenCookie({ cookies }, token, session.expiresAt);
-
-		cookies.delete('device_id', { path: '/' });
-
-		// TODO: User should have `setup-complete` field to track this
-		// A redirect handler should probably implemented, since this is used on every page handling auth.
-		if (!user.firstName || !user.lastName) {
-			throw redirect(303, '/user/account-setup');
+		if (authResult.isErr()) {
+			throw redirect(303, `/auth/login?error=${authResult.error.code}`);
 		}
 
-		throw redirect(303, '/');
+		throw redirect(303, authResult.unwrap().redirectTo);
 	}
 
-	// If different device, redirect to OTP display page
 	throw redirect(303, `/auth/otp?token=${token}`);
 };

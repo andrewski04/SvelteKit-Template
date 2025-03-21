@@ -28,10 +28,14 @@ export async function createUserIfNotExists(email: string): Promise<Result<{ use
 
 	let user = await findUserByEmail(email);
 
-	if (!user) {
-		user = await prisma.user.create({
-			data: { email }
-		});
+	try {
+		if (!user) {
+			user = await prisma.user.create({
+				data: { email }
+			});
+		}
+	} catch {
+		return err(new AppError('Error finding or creating user', 'ERR_FIND_CREATE_USER'));
 	}
 
 	return ok({ user });
