@@ -1,3 +1,7 @@
+---
+slug: /
+---
+
 # SvelteKit-Template
 
 This template aims to serve as a boilerplate project, with both Node.js and external dependencies, that is easy to setup. It contains pre-configured functionality for a PostgreSQL database, Prisma ORM, authentication, testing, and more.

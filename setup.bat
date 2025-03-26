@@ -8,10 +8,11 @@ set COPY_ENV=1
 REM Parse command line arguments
 :parse_args 
 if "%~1"=="" goto :end_parse_args
-if /i "%~1"=="--keep-docker" set REMOVE_DOCKER=0
-if /i "%~1"=="-k" set REMOVE_DOCKER=0
-if /i "%~1"=="--no-env" set COPY_ENV=0
-if /i "%~1"=="-n" set COPY_ENV=0
+if /i "%~1"=="--docker-keep" set REMOVE_DOCKER=0
+if /i "%~1"=="-d" set REMOVE_DOCKER=0
+if /i "%~1"=="--env-keep" set COPY_ENV=0
+if /i "%~1"=="-e" set COPY_ENV=0
+
 shift
 goto :parse_args
 :end_parse_args
