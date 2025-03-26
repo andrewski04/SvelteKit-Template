@@ -28,13 +28,26 @@ const config: Config = {
 		locales: ['en']
 	},
 
+	markdown: {
+		format: 'detect'
+	},
+
 	plugins: [
 		[
 			'docusaurus-plugin-typedoc',
 			{
-				entryPoints: ['../src/'],
+				name: 'API Documentation',
+				entryPoints: ['../src/**/*.ts'],
+				exclude: ['**/*.test.ts'],
 				tsconfig: '../tsconfig.json',
-				out: './docs/api'
+				out: './docs/api',
+				entryPointStrategy: 'expand',
+				sidebar: {
+					autoConfiguration: true,
+					pretty: false,
+					typescript: true,
+					deprecatedItemClassName: 'typedoc-sidebar-item-deprecated'
+				}
 			}
 		]
 	],
@@ -76,7 +89,26 @@ const config: Config = {
 			theme: prismThemes.github,
 			darkTheme: prismThemes.dracula
 		}
-	} satisfies Preset.ThemeConfig
+	} satisfies Preset.ThemeConfig,
+
+	themes: [
+		// ... Your other themes.
+		[
+			require.resolve('@easyops-cn/docusaurus-search-local'),
+			/** @type {import("@easyops-cn/docusaurus-search-local").PluginOptions} */
+			{
+				// ... Your options.
+				// `hashed` is recommended as long-term-cache of index file is possible.
+				hashed: true
+
+				// For Docs using Chinese, it is recomended to set:
+				// language: ["en", "zh"],
+
+				// If you're using `noIndex: true`, set `forceIgnoreNoIndex` to enable local index:
+				// forceIgnoreNoIndex: true,
+			}
+		]
+	]
 };
 
 export default config;

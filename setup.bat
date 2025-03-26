@@ -130,5 +130,7 @@ echo Domains:
 echo - Development server: http://localhost:5173 (start server first)
 echo - pgAdmin: http://localhost:5050 (email: admin@example.com, password: admin)
 echo - MailDev: http://localhost:8080
+echo - Docs: http://localhost:3000
 echo.
-echo Run `npm run dev` to start the dev server!
+echo Run `npm run docs` to start the docs server
+echo Run `npm run dev` to start the dev server
