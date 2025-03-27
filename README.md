@@ -34,19 +34,29 @@ Read [Development Environment Setup](docs/docs/getting-started/dev-env-setup.md)
 
 ### Start Dev Server
 
-To start the SvelteKit dev server and run dependencies, enter the following command while in the project root directory.
+To start the SvelteKit dev server, enter the following command while in the project root directory.
 
 ```bash
-# Run containers, if not already running
-docker compose up -d
-
 # Run dev server and open page in browser
 npm run dev -- --open
 ```
 
 The dev server will automatically rebuild the project and reload the page when a change is saved.
 
-## Post Setup Tips
+## Next Steps
+
+After setting up your development environment, I heavily recommended reading the complete documentation.
+The documentation, powered by Docusaurus, runs locally and can be starting using the following command:
+
+```bash
+npm run docs
+```
+
+You can then access it at "http://localhost:3000/".
+
+It contains a lot of information about the structure of the project and other useful resources to help get you started. It also contains automatically generated API documentation from TypeScript, allowing you to quickly navigate the codebase.
+
+# TODO: MOVE THE REST TO DOCS
 
 ## Debugging & Errors
 
