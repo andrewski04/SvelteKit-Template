@@ -2,7 +2,7 @@
 
 > **Result**\<`T`\> = [`Ok`](../classes/Ok.md)\<`T`\> \| [`Err`](../classes/Err.md)\<[`AppError`](../classes/AppError.md)\>
 
-Defined in: [src/lib/util/error.ts:33](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L33)
+Defined in: [src/lib/util/error.ts:33](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L33)
 
 Represents either success (Ok) or failure (Err)
 

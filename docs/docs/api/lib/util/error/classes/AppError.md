@@ -1,6 +1,6 @@
 # Class: AppError
 
-Defined in: [src/lib/util/error.ts:4](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L4)
+Defined in: [src/lib/util/error.ts:4](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L4)
 
 Standard error message to be used throughout the app
 
@@ -14,7 +14,7 @@ Standard error message to be used throughout the app
 
 > **new AppError**(`message`, `code`, `statusCode`): `AppError`
 
-Defined in: [src/lib/util/error.ts:7](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L7)
+Defined in: [src/lib/util/error.ts:7](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L7)
 
 #### Parameters
 
@@ -56,7 +56,7 @@ Defined in: docs/node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 
 > `readonly` **code**: `string`
 
-Defined in: [src/lib/util/error.ts:5](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L5)
+Defined in: [src/lib/util/error.ts:5](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L5)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [src/lib/util/error.ts:5](https://github.com/andrewski04/SvelteKit-T
 
 > `readonly` **message**: `string`
 
-Defined in: [src/lib/util/error.ts:8](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L8)
+Defined in: [src/lib/util/error.ts:8](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L8)
 
 #### Inherited from
 
@@ -100,7 +100,7 @@ Defined in: docs/node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > `readonly` **statusCode**: `number` = `500`
 
-Defined in: [src/lib/util/error.ts:10](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L10)
+Defined in: [src/lib/util/error.ts:10](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L10)
 
 ***
 
@@ -152,7 +152,7 @@ Defined in: node\_modules/@types/node/globals.d.ts:145
 
 > **toString**(): `string`
 
-Defined in: [src/lib/util/error.ts:16](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L16)
+Defined in: [src/lib/util/error.ts:16](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L16)
 
 Returns a string representation of an object.
 

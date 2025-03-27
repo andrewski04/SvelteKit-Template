@@ -1,6 +1,6 @@
 # Class: Err\<E\>
 
-Defined in: [src/lib/util/error.ts:67](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L67)
+Defined in: [src/lib/util/error.ts:67](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L67)
 
 Represents a failed operation with an error
 
@@ -16,7 +16,7 @@ Represents a failed operation with an error
 
 > **new Err**\<`E`\>(`error`): `Err`\<`E`\>
 
-Defined in: [src/lib/util/error.ts:68](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L68)
+Defined in: [src/lib/util/error.ts:68](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L68)
 
 #### Parameters
 
@@ -34,7 +34,7 @@ Defined in: [src/lib/util/error.ts:68](https://github.com/andrewski04/SvelteKit-
 
 > `readonly` **error**: `E`
 
-Defined in: [src/lib/util/error.ts:68](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L68)
+Defined in: [src/lib/util/error.ts:68](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L68)
 
 ## Methods
 
@@ -42,7 +42,7 @@ Defined in: [src/lib/util/error.ts:68](https://github.com/andrewski04/SvelteKit-
 
 > **isErr**(): `this is Err<E>`
 
-Defined in: [src/lib/util/error.ts:80](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L80)
+Defined in: [src/lib/util/error.ts:80](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L80)
 
 #### Returns
 
@@ -56,7 +56,7 @@ true if the result is Err, false otherwise
 
 > **isOk**(): `false`
 
-Defined in: [src/lib/util/error.ts:73](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L73)
+Defined in: [src/lib/util/error.ts:73](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L73)
 
 #### Returns
 
@@ -70,7 +70,7 @@ true if the result is Ok, false otherwise
 
 > **unwrapErr**(): `never`
 
-Defined in: [src/lib/util/error.ts:90](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L90)
+Defined in: [src/lib/util/error.ts:90](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L90)
 
 #### Returns
 

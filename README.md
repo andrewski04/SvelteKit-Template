@@ -10,13 +10,7 @@ This project also contains pre-configured VSCode workspace settings and recommen
 - NodeJS
 - Tailwind CSS
 - Prisma ORM
-- Lucia authentication guide
-- Vitest
-
-### Docker Dependencies
-
-- PostgreSQL/pgAdmin Database
-- Maildev SMTP (for testing email sending)
+- PostgreSQL
 
 # Setup Environment
 
@@ -36,7 +30,7 @@ Simply run this after cloning the repository: `./setup.bat`
 
 > **NOTE:** This can be ran to fix many issues related to the environment or database. **By default, this will reset all docker containers (the database) and overwrite the local `.env` file.** Use flags `--docker-keep`/`-d` and `--env-keep`/`-e` to keep containers and environment variables.
 
-Read [Development Environment Setup](docs/dev-env-setup.md) for the manual steps if you are having issues or want more details.
+Read [Development Environment Setup](docs/docs/getting-started/dev-env-setup.md) for the manual steps if you are having issues or want more details.
 
 ### Start Dev Server
 

@@ -2,7 +2,7 @@
 
 > **err**\<`E`\>(`error`): [`Err`](../classes/Err.md)\<`E`\>
 
-Defined in: [src/lib/util/error.ts:121](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/util/error.ts#L121)
+Defined in: [src/lib/util/error.ts:121](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/util/error.ts#L121)
 
 Used in functions returning Result<T> to return Err with error
 

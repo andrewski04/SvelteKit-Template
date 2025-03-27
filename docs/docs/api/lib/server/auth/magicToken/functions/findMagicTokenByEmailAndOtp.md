@@ -2,7 +2,7 @@
 
 > **findMagicTokenByEmailAndOtp**(`email`, `otp`): `Promise`\<`null` \| \{ `createdAt`: `Date`; `deviceId`: `string`; `email`: `string`; `expiresAt`: `Date`; `hashedOtp`: `null` \| `string`; `hashedToken`: `string`; \}\>
 
-Defined in: [src/lib/server/auth/magicToken.ts:90](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/server/auth/magicToken.ts#L90)
+Defined in: [src/lib/server/auth/magicToken.ts:90](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/server/auth/magicToken.ts#L90)
 
 Finds a magic token by email and OTP code.
 

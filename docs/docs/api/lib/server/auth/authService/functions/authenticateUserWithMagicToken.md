@@ -2,7 +2,7 @@
 
 > **authenticateUserWithMagicToken**(`options`): `Promise`\<[`Result`](../../../../util/error/type-aliases/Result.md)\<`AuthenticateUserResult`\>\>
 
-Defined in: [src/lib/server/auth/authService.ts:48](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/lib/server/auth/authService.ts#L48)
+Defined in: [src/lib/server/auth/authService.ts:48](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/lib/server/auth/authService.ts#L48)
 
 Handles authentication flow on pages such as `/auth/check-email` and `/auth/otp`.
 

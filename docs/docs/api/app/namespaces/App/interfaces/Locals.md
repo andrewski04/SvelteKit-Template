@@ -10,7 +10,7 @@ The interface that defines `event.locals`, which can be accessed in server [hook
 
 > **session**: `any`
 
-Defined in: [src/app.d.ts:12](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/app.d.ts#L12)
+Defined in: [src/app.d.ts:12](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/app.d.ts#L12)
 
 ***
 
@@ -18,4 +18,4 @@ Defined in: [src/app.d.ts:12](https://github.com/andrewski04/SvelteKit-Template/
 
 > **user**: `any`
 
-Defined in: [src/app.d.ts:11](https://github.com/andrewski04/SvelteKit-Template/blob/f0b9cd97c48d96681ee3ffe7effd53d4bdf784a1/src/app.d.ts#L11)
+Defined in: [src/app.d.ts:11](https://github.com/andrewski04/SvelteKit-Template/blob/9ffac812183d006906d6dfaaa45d8940033328db/src/app.d.ts#L11)
