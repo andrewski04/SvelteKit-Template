@@ -29,8 +29,11 @@ const config: Config = {
 	},
 
 	markdown: {
-		format: 'detect'
+		format: 'detect',
+		mermaid: true
 	},
+
+	themes: ['@docusaurus/theme-mermaid'],
 
 	plugins: [
 		[

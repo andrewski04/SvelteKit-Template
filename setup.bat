@@ -4,14 +4,20 @@ setlocal enabledelayedexpansion
 REM Initialize flags
 set REMOVE_DOCKER=1
 set COPY_ENV=1
+set SKIP_EXTENSIONS=0
 
 REM Parse command line arguments
 :parse_args 
 if "%~1"=="" goto :end_parse_args
+
 if /i "%~1"=="--docker-keep" set REMOVE_DOCKER=0
 if /i "%~1"=="-d" set REMOVE_DOCKER=0
+
 if /i "%~1"=="--env-keep" set COPY_ENV=0
 if /i "%~1"=="-e" set COPY_ENV=0
+
+if /i "%~1"=="--skip-extensions" set SKIP_EXTENSIONS=1
+if /i "%~1"=="-s" set SKIP_EXTENSIONS=1
 
 shift
 goto :parse_args
@@ -105,17 +111,22 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-REM Install recommended VSCode extensions
-echo.
-echo Installing VSCode extensions...
-call code --install-extension svelte.svelte-vscode
-call code --install-extension ardenivanov.svelte-intellisense
-call code --install-extension fivethree.vscode-svelte-snippets
-call code --install-extension bradlc.vscode-tailwindcss
-call code --install-extension esbenp.prettier-vscode
-call code --install-extension dbaeumer.vscode-eslint
-call code --install-extension prisma.prisma
-call code --install-extension christian-kohler.npm-intellisense
+REM Install recommended VSCode extensions (if flag set)
+if %SKIP_EXTENSIONS%==1 (
+    echo.
+    echo Skipping VSCode extensions installation
+) else (
+    echo.
+    echo Installing VSCode extensions...
+    call code --install-extension svelte.svelte-vscode
+    call code --install-extension ardenivanov.svelte-intellisense
+    call code --install-extension fivethree.vscode-svelte-snippets
+    call code --install-extension bradlc.vscode-tailwindcss
+    call code --install-extension esbenp.prettier-vscode
+    call code --install-extension dbaeumer.vscode-eslint
+    call code --install-extension prisma.prisma
+    call code --install-extension christian-kohler.npm-intellisense
+)
 
 call npm run check
 if %errorlevel% neq 0 (

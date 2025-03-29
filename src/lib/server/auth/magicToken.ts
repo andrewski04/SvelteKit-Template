@@ -81,7 +81,7 @@ export async function findActiveMagicTokenByEmail(email: string) {
 }
 
 /**
- * Finds a magic token by email and OTP code.
+ * Finds a magic token by email and OTP code, only returning it if it is valid and not expired.
  *
  * @param email - The email associated with the token.
  * @param otp - The raw OTP code to verify.
@@ -122,13 +122,23 @@ export async function invalidateMagicToken(token: string, hashed: boolean) {
 export async function generateOtp(rawToken: string): Promise<Result<string>> {
 	const hashedToken = encodeHexLowerCase(sha256(new TextEncoder().encode(rawToken)));
 
+	// Check if the token already has an OTP
+	const existingToken = await prisma.magicToken.findUnique({
+		where: { hashedToken }
+	});
+
+	// If the token already has an OTP hash, consider it used
+	if (existingToken && existingToken.hashedOtp) {
+		return err(new AppError('Token already used', 'ERR_TOKEN_ALREADY_USED'));
+	}
+
 	// generate OTP and hash for storage
 	const otpValue = crypto.randomBytes(3).readUIntBE(0, 3) % 1000000;
 	const otp = otpValue.toString().padStart(6, '0');
 	const hashedOtp = encodeHexLowerCase(sha256(new TextEncoder().encode(otp)));
 
 	try {
-		// update magicToken in databse
+		// update magicToken in database
 		await prisma.magicToken.update({
 			where: { hashedToken },
 			data: { hashedOtp }

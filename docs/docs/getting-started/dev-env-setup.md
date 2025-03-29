@@ -1,4 +1,10 @@
-# Development Environment Setup
+---
+sidebar_position: 2
+---
+
+# Manual Environment Setup
+
+> **NOTE:** I recommend running the [setup script](./setup-script) to automatically handle the following steps. If you are not using Windows or have any issues, then follow the steps below.
 
 ## Install VSCode Extensions
 
@@ -39,7 +45,7 @@ This will update the database schema and generate the Prisma client, which is us
 
 This will need to be reran after any changes are made or pulled from Git.
 
-For more info on migrations, see the [database documentation](./database.md).
+For more info on migrations, see the [database documentation](../core-concepts/database.md).
 
 ```
 npx prisma migrate dev
@@ -47,10 +53,4 @@ npx prisma migrate dev
 
 ## Start the Development Server
 
-This will start the development server and begin watching for file changes.
-
-```
-npm run dev
-```
-
-For more useful post-setup information, see the [README](../README.md#start-dev-server).
+Read [accessing development servers](./access-dev-servers.md) for more info.

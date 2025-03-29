@@ -6,6 +6,7 @@ import {
 } from '$lib/server/auth/magicToken';
 import { authenticateUserWithMagicToken } from '$lib/server/auth/authService';
 import { validateEmail } from '$lib/util/validation';
+import { setSessionTokenCookie } from '$lib/server/auth/session';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const email = url.searchParams.get('email');
@@ -35,15 +36,15 @@ export const actions: Actions = {
 		}
 
 		const magicToken = await findMagicTokenByEmailAndOtp(email, otp);
+		const deviceID = cookies.get('device_id');
 
-		if (!magicToken) {
+		if (!magicToken || magicToken.deviceId !== deviceID) {
 			return { success: false, error: 'Invalid or expired verification code' };
 		}
 
 		const authResult = await authenticateUserWithMagicToken({
 			email,
 			hashedMagicToken: magicToken.hashedToken,
-			cookies,
 			redirectTo: '/'
 		});
 
@@ -51,6 +52,9 @@ export const actions: Actions = {
 			return { success: false, error: authResult.error.message };
 		}
 
-		throw redirect(303, authResult.unwrap().redirectTo);
+		const { redirectTo, token, expiresAt } = authResult.unwrap();
+		setSessionTokenCookie({ cookies }, token, expiresAt);
+
+		throw redirect(303, redirectTo);
 	}
 } satisfies Actions;

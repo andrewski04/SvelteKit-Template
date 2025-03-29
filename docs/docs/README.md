@@ -2,74 +2,37 @@
 slug: /
 ---
 
-# SvelteKit-Template
+# SvelteKit-Template Documentation
 
-This template aims to serve as a boilerplate project, with both Node.js and external dependencies, that is easy to setup. It contains pre-configured functionality for a PostgreSQL database, Prisma ORM, authentication, testing, and more.
+Welcome to the SvelteKit-Template Documentation!
 
-This project also contains pre-configured VSCode workspace settings and recommended plugins, helping developers integrate SvelteKit easily into their environment.
+This documentation aims to provide a comprehensive guide to the architecture of the project and information that will help you during development, as well as autogenerate API documentation.
 
-## Stack
+## Preparing the Environment
 
-- SvelteKit
-- NodeJS
-- Tailwind CSS
-- Prisma ORM
-- Lucia authentication guide
-- Vitest
+If you have already setup the project by following the README, you can skip this section.
 
-### Docker Dependencies
+Otherwise, install the following dependencies:
 
-- PostgreSQL/pgAdmin Database
-- Maildev SMTP (for testing email sending)
+- [Node.js](https://nodejs.org/en/download/)
+- [VSCode](https://code.visualstudio.com/)
+- [Docker](https://docs.docker.com/desktop/setup/install/windows-install/)
 
-# Setup Environment
+> **NOTE:** Ensure your restart your computer and Docker Desktop is running after installation.
 
-### Installing External Dependencies
+Then, either follow the [setup script](./getting-started/setup-script) or manually setup the environment by following the [setup guide](./getting-started/dev-env-setup).
 
-Install [Node.js](https://nodejs.org/en/download/)\
-Install [VSCode](https://code.visualstudio.com/) \
-Install [Docker](https://docs.docker.com/desktop/setup/install/windows-install/)
+> **Even if you already setup the environment, I would recommend reading about the setup script since it is a useful tool for debugging and fixing issues.**
 
-> **Note:** After installing Docker, ensure that you restart your computer and open Docker Desktop to start the Docker Engine for the first time. After that, it will run on startup by default.
+## Next Steps
 
-### Run the Setup Script
+After setting up your environment, I recommend reading the rest of the Getting Started sections. After this, read through the Core Concepts to get an understanding of the project's architecture.
 
-The setup batch script will handle installing Node dependencies, starting Docker containers, setting environment variables, initializing the database, and installing VSCode extensions.
+## TODO
 
-Simply run this after cloning the repository: `./setup.bat`
-
-> **NOTE:** This can be ran to fix many issues related to the environment or database. **By default, this will reset all docker containers (the database) and overwrite the local `.env` file.** Use flags `--docker-keep`/`-d` and `--env-keep`/`-e` to keep containers and environment variables.
-
-Read [Development Environment Setup](docs/dev-env-setup.md) for the manual steps if you are having issues or want more details.
-
-### Start Dev Server
-
-To start the SvelteKit dev server and run dependencies, enter the following command while in the project root directory.
-
-```bash
-# Run containers, if not already running
-docker compose up -d
-
-# Run dev server and open page in browser
-npm run dev -- --open
-```
-
-The dev server will automatically rebuild the project and reload the page when a change is saved.
-
-## Post Setup Tips
-
-## Debugging & Errors
-
-- If you are getting odd linting errors (such as `./$types` not found) run command `npm run check` or run the dev server.
-
-- For **[auth] TypeError: Cannot read properties of undefined (reading 'create')** or other database errors, run `npx prisma migrate dev` to synchronize the client and DB.
-
-- If database migrations fail to apply (and the Docker containers are running), run `docker compose down -v` to completely clear the database. This will delete all data, since this is just for development.
-
-# TODO
+> In the future, these will be handled with GitHub issues or Trello tasks.
 
 - Add testing (unit and web)
 - Add logger
-- fix vuln: OTP can be used on different device than it was requested from
-- add auth rate limiting and IP logging
+- add auth rate limiting
 - implement front end error handling

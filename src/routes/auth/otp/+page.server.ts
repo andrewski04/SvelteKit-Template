@@ -18,6 +18,9 @@ export const load: PageServerLoad = async ({ url }) => {
 	const otp = await generateOtp(token);
 
 	if (otp.isErr()) {
+		if (otp.error.code === 'ERR_TOKEN_ALREADY_USED') {
+			throw redirect(303, '/auth/login?error=token_already_used');
+		}
 		throw redirect(303, '/auth/login?error=invalid_token');
 	}
 

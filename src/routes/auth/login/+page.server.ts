@@ -5,6 +5,8 @@ import { sendMagicLink } from '$lib/server/mailer';
 import { nanoid } from 'nanoid';
 import { validateEmail } from '$lib/util/validation';
 
+//TODO: redirect user if already logged in
+
 export const actions: Actions = {
 	// handles email input for passwordless login
 	// successful requests redirect to check-email page
@@ -26,7 +28,7 @@ export const actions: Actions = {
 				path: '/',
 				httpOnly: true,
 				sameSite: 'lax',
-				maxAge: 60 * 60 * 24 * 365 // 1 year
+				maxAge: 60 * 60 * 24 * 365
 			});
 		}
 
