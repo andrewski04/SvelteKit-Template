@@ -17,7 +17,7 @@ interface AuthenticateUserResult {
 }
 
 /**
- * Handles authentication flow on pages such as `/auth/check-email` and `/auth/otp`.
+ * Handles authentication flow on pages such as `/auth/check-email` and `/auth/magic-link`.
  *
  * - Invalidates the magic token
  * - Creates or finds the user
